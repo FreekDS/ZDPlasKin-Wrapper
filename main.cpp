@@ -19,7 +19,8 @@ using PlatformLoader = UnixLoader;
 using namespace std;
 
 
-using ADD_FT = int (*)(int &, int &);
+using ADD_FT_old = int (*)(int &, int &);
+using ADD_FT = int(*)(int& a, int& b, int& result);
 
 /**
  * 1. dynamisch compilen/laden fortran module
@@ -41,8 +42,9 @@ int main() {
 		loader->init();
 
 		auto add_f = loader->getFunction<ADD_FT>("add");
-		int a = 1, b = 3;
-		cout << add_f(a, b) << endl;
+		int a = 1, b = 3, result;
+		cout << add_f(a, b, result) << endl;
+		cout << result;
 		delete loader;
 		loader = nullptr;
 	}
