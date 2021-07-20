@@ -1,10 +1,16 @@
 !Test
 
-module test
+module testing
+    public
+
+    integer, parameter :: testjeee = 1
+    doubleprecision, parameter :: haha  = 1.2
+    character(*), parameter :: TEST = "yese"
+
 contains
     subroutine print(string)
         character(*) :: string
-        write(*, *) string
+        write(*, *) testjeee
     end subroutine print
 
 
@@ -25,6 +31,6 @@ contains
         integer :: b
         add_old = a + b
     end function add_old
-end module test
+end module testing
 
 

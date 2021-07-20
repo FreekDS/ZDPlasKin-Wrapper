@@ -89,9 +89,9 @@ class ZDPlasKinWrapper {
 
 	double **reac_source_matrix(double reac_rate_local[]);
 
-	double *fex(int neq, double t, double y[neq]);
+	double *fex(int neq, double t, double y[]);
 
-	double **jex(int neq, double t, double y[neq], int ml, int mu, int nrpd);
+	double **jex(int neq, double t, double y[], int ml, int mu, int nrpd);
 
 	void reac_rates(double time);
 };
