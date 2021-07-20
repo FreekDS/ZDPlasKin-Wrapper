@@ -5,11 +5,11 @@
 
 class UnixLoader : public ILibraryLoader {
  public:
-  explicit UnixLoader(const std::string &library);
-  void init() override;
-  ~UnixLoader() override;
+	explicit UnixLoader(const std::string &library);
+	void init() override;
+	~UnixLoader() override;
  protected:
-  void *getFuncAddr(const std::string &name) override;
+	void *getFuncAddr(const std::string &name) override;
 
 };
 

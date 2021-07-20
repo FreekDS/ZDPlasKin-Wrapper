@@ -6,16 +6,16 @@
 
 class WindowsLoader : public ILibraryLoader {
  private:
-  HMODULE _module = nullptr;
+	HMODULE _module = nullptr;
  public:
  private:
-  void *getFuncAddr(const std::string &name) override;
+	void *getFuncAddr(const std::string &name) override;
  public:
-  explicit WindowsLoader(const std::string &library);
+	explicit WindowsLoader(const std::string &library);
 
-  void init() override;
+	void init() override;
 
-  ~WindowsLoader() override;
+	~WindowsLoader() override;
 };
 
 #endif //ZDPLASKIN_WINDOWSLOADER_H

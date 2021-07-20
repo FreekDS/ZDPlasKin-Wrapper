@@ -2,9 +2,11 @@
 
 void UnixLoader::init() {
 	// TODO implement
+	_initialized = true;
 }
 
 void *UnixLoader::getFuncAddr(const std::string &name) {
+	requireInitialization();
 	// TODO implement
 	return nullptr;
 }
