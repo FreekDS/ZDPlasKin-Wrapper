@@ -7,11 +7,11 @@ using double_complex = struct { double re, im; };
 
 
 // Interface idk if need to be callable, probably not
-using ZDPlasKin_bolsig_Init = void (*)(char *a, int a_len);
-using ZDPlasKin_bolsig_ReadCollisions = void (*)(char *a, int a_len);
+using ZDPlasKin_bolsig_Init = void (*)(const char *a, size_t a_len);
+using ZDPlasKin_bolsig_ReadCollisions = void (*)(const char *a, size_t a_len);
 using ZDPlasKin_bolsig_GetNumCollisions = void (*)(int &i, int &j);
-using ZDPlasKin_bolsig_GetSpeciesName = void (*)(char *a, int &i, int a_len);
-using ZDPlasKin_bolsig_GetReactionName = void (*)(char *a, int &i, int a_len);
+using ZDPlasKin_bolsig_GetSpeciesName = void (*)(const char *a, int &i, size_t a_len);
+using ZDPlasKin_bolsig_GetReactionName = void (*)(const char *a, int &i, size_t a_len);
 using ZDPlasKin_bolsig_SolveBoltzmann = double *(*)(int &a_len, double a[], int &b_len, double b[]);
 using ZDPlasKin_bolsig_GetEEDF = void *(double **a, int &i);
 
@@ -23,9 +23,9 @@ using ZDPlasKin_timestep_explicit = double (*)(double &time,
 											   double &atol_loc,
 											   double &switch_implicit);
 using ZDPlasKin_bolsig_rates = void (*)(bool &lbolsig_force);
-using ZDPlasKin_get_species_index = int (*)(char *str, int &i, int str_len);
-using ZDPlasKin_set_density = void (*)(char *string, double &DENS, bool &LDENS_CONST, int string_len);
-using ZDPlasKin_get_density = void (*)(char *string, double &DENS, bool &LDENS_CONST, int string_len);
+using ZDPlasKin_get_species_index = int (*)(const char *str, int &i, size_t str_len);
+using ZDPlasKin_set_density = void (*)(const char *string, double &DENS, bool &LDENS_CONST, size_t string_len);
+using ZDPlasKin_get_density = void (*)(const char *string, double &DENS, bool &LDENS_CONST, size_t string_len);
 using ZDPlasKin_get_density_total = void (*)(double &ALL_SPECIES,
 											 double &ALL_NEUTRAL,
 											 double &ALL_ION_POSITIVE,
@@ -70,14 +70,14 @@ using ZDPlasKin_get_conditions = void (*)(double &GAS_TEMPERATURE,
 										  double &ELEC_POWER_INELASTIC_N,
 										  double **ELEC_EEDF);
 using ZDPlasKin_reset = void (*)();
-using ZDPlasKin_stop = void (*)(char *string, int string_len);
-using ZDPlasKin_write_file = void (*)(char *FILE_SPECIES,
-									  char *FILE_REACTIONS,
-									  char *FILE_SOURCE_MATRIX,
+using ZDPlasKin_stop = void (*)(const char *string, size_t string_len);
+using ZDPlasKin_write_file = void (*)(const char *FILE_SPECIES,
+									  const char *FILE_REACTIONS,
+									  const char *FILE_SOURCE_MATRIX,
 									  int &FILE_UNIT,
-									  int FILE_SPECIFIES_len,
-									  int FILE_REACTIONS_len,
-									  int FILE_SOURCE_MATRIX_len);
+									  size_t FILE_SPECIFIES_len,
+									  size_t FILE_REACTIONS_len,
+									  size_t FILE_SOURCE_MATRIX_len);
 using ZDPlasKin_write_qtplaskin = void (*)(double &time, bool &LFORCE_WRITE);
 using ZDPlasKin_reac_source_matrix = void (*)(double reac_rate_local[], double **reac_source_local);
 using ZDPlasKin_fex = double (*)(int &neq, double &t, double y[], double ydot[]);

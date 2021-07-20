@@ -22,7 +22,7 @@ using namespace std;
 using ADD_FT_old = int (*)(int &, int &);
 using ADD_FT = int (*)(int &a, int &b, int &result);
 using WRITE_FT = void (*)();
-using PRINT_FT = void (*)(const char *, int size);
+using PRINT_FT = void (*)(const char *, size_t size);
 
 /**
  * 1. dynamisch compilen/laden fortran module
@@ -46,9 +46,7 @@ int main() {
 		auto add_f = loader->getFunction<PRINT_FT>("print");
 		int a = 1, b = 3, result;
 		const std::string str = "World hello?";
-		const char* t = str.c_str();
-		int size = str.size();
-		add_f(str.c_str(), size);
+		add_f(str.c_str(), str.size());
 		cout << result;
 		delete loader;
 		loader = nullptr;
