@@ -1,6 +1,7 @@
 #include "windows/WindowsLoader.h"
 
 void WindowsLoader::init() {
+	// Todo allow for reinitialization (free first in that case)
 	_module = LoadLibrary(TEXT(_libPath));
 	if (_module==nullptr) {
 		_initialized = false;

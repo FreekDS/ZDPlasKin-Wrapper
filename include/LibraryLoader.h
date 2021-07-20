@@ -10,7 +10,7 @@ class ILibraryLoader {
 	virtual void *getFuncAddr(const std::string &name) = 0;
 
 	void requireInitialization() const {
-		if(!_initialized) {
+		if (!_initialized) {
 			throw std::exception();
 		}
 	}

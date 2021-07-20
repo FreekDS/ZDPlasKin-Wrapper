@@ -37,23 +37,19 @@ using PRINT_FT = void (*)(const char *, size_t size);
  */
 
 int main() {
-	ILibraryLoader *loader;
 	std::string path = R"(C:\Users\gebruiker\CLionProjects\ZDPlaskin\cmake-build-debug\fortran\libfortran_lib.dll)";
+	PlatformLoader loader(path);
 	try {
-		loader = new PlatformLoader(path);
-		loader->init();
+		loader.init();
 
-		auto add_f = loader->getFunction<PRINT_FT>("print");
+		auto add_f = loader.getFunction<PRINT_FT>("print");
 		int a = 1, b = 3, result;
 		const std::string str = "World hello?";
 		add_f(str.c_str(), str.size());
 		cout << result;
-		delete loader;
-		loader = nullptr;
 	}
 	catch (const std::exception &e) {
-		delete loader;
-		loader = nullptr;
+		// TODO custom exception handling
 		return -1;
 	}
 
