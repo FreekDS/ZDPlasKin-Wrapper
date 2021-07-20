@@ -34,23 +34,23 @@ using ADD_FT = int (*)(int &, int &);
  */
 
 int main() {
-  ILibraryLoader *loader;
-  std::string path = R"(C:\Users\gebruiker\CLionProjects\ZDPlaskin\cmake-build-debug\fortran\libfortran_lib.dll)";
-  try {
-	loader = new PlatformLoader(path);
-	loader->init();
+	ILibraryLoader *loader;
+	std::string path = R"(C:\Users\gebruiker\CLionProjects\ZDPlaskin\cmake-build-debug\fortran\libfortran_lib.dll)";
+	try {
+		loader = new PlatformLoader(path);
+		loader->init();
 
-	auto add_f = loader->getFunction<ADD_FT>("add");
-	int a = 1, b = 3;
-	cout << add_f(a, b) << endl;
-	delete loader;
-	loader = nullptr;
-  }
-  catch (const std::exception &e) {
-	delete loader;
-	loader = nullptr;
-	return -1;
-  }
+		auto add_f = loader->getFunction<ADD_FT>("add");
+		int a = 1, b = 3;
+		cout << add_f(a, b) << endl;
+		delete loader;
+		loader = nullptr;
+	}
+	catch (const std::exception &e) {
+		delete loader;
+		loader = nullptr;
+		return -1;
+	}
 
-  return 0;
+	return 0;
 }
