@@ -8,6 +8,8 @@ class ZDPlasKinWrapper {
 
 	ILibraryLoader *_lib;
 
+	static std::string lib_f(const std::string& name);
+
  public:
 	void init();
 
@@ -19,7 +21,7 @@ class ZDPlasKinWrapper {
 							  double &dtime,
 							  double rtol_loc,
 							  double atol_loc,
-							  bool switch_implicit = false);
+							  double switch_implicit);
 
 	void bolsig_rates(bool lbolsig_force = false);
 
@@ -87,7 +89,7 @@ class ZDPlasKinWrapper {
 
 	double **reac_source_matrix(double reac_rate_local[]);
 
-	double *fex(int neq, double t, double y[neq], double ydot[neq]);
+	double *fex(int neq, double t, double y[neq]);
 
 	double **jex(int neq, double t, double y[neq], int ml, int mu, int nrpd);
 

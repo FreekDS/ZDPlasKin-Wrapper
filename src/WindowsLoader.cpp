@@ -21,5 +21,5 @@ WindowsLoader::WindowsLoader(const std::string &library)
 
 void *WindowsLoader::getFuncAddr(const std::string &name) {
 	requireInitialization();
-	return (void *)GetProcAddress(_module, (name + '_').c_str());
+	return (void *)GetProcAddress(_module, name.c_str());
 }
