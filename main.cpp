@@ -21,6 +21,7 @@ using namespace std;
 
 using ADD_FT_old = int (*)(int &, int &);
 using ADD_FT = int(*)(int& a, int& b, int& result);
+using WRITE_FT = void(*)();
 
 /**
  * 1. dynamisch compilen/laden fortran module
@@ -41,9 +42,9 @@ int main() {
 		loader = new PlatformLoader(path);
 		loader->init();
 
-		auto add_f = loader->getFunction<ADD_FT>("add");
+		auto add_f = loader->getFunction<WRITE_FT>("writetest");
 		int a = 1, b = 3, result;
-		cout << add_f(a, b, result) << endl;
+		add_f();
 		cout << result;
 		delete loader;
 		loader = nullptr;

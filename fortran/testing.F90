@@ -1,5 +1,10 @@
 !Test
 
+function writeTest()
+    write(*,*)  "Hello World!"
+end function writeTest
+
+
 subroutine add(a, b, result)
     integer, intent(in) :: a
     integer, intent(out) :: b
