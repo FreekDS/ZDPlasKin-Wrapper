@@ -1,5 +1,6 @@
 #include <iostream>
 #include "platform.h"
+#include "ZDPlasKinFunctionDefs.h"
 
 #ifdef WINDOWS
 
