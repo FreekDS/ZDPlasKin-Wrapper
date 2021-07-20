@@ -11,7 +11,8 @@ set(SRC
         main.cpp
         src/WindowsLoader.cpp
         src/UnixLoader.cpp
-        )
+        src/ZDPlasKinWrapper.cpp
+    )
 
 add_executable(ZDPlaskin ${SRC})
 

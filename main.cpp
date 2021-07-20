@@ -42,6 +42,7 @@ int main() {
 	try {
 		loader.init();
 
+		// in modules name scheme: __{module_name}_MOD_{method_name}
 		auto add_f = loader.getFunction<PRINT_FT>("print");
 		int a = 1, b = 3, result;
 		const std::string str = "World hello?";
