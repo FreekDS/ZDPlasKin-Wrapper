@@ -12,18 +12,18 @@ using ZDPlasKin_bolsig_ReadCollisions = void (*)(const char *a, size_t a_len);
 using ZDPlasKin_bolsig_GetNumCollisions = void (*)(int &i, int &j);
 using ZDPlasKin_bolsig_GetSpeciesName = void (*)(const char *a, int &i, size_t a_len);
 using ZDPlasKin_bolsig_GetReactionName = void (*)(const char *a, int &i, size_t a_len);
-using ZDPlasKin_bolsig_SolveBoltzmann = double *(*)(int &a_len, double a[], int &b_len, double b[]);
-using ZDPlasKin_bolsig_GetEEDF = void *(double **a, int &i);
+using ZDPlasKin_bolsig_SolveBoltzmann = void (*)(int &a_len, double a[], int &b_len, double b[]);
+using ZDPlasKin_bolsig_GetEEDF = void (*)(double **a, int &i);
 
 using ZDPlasKin_init = void (*)();
-using ZDPlasKin_timestep = double (*)(double &time, double &dtime);
-using ZDPlasKin_timestep_explicit = double (*)(double &time,
+using ZDPlasKin_timestep = void (*)(double &time, double &dtime);
+using ZDPlasKin_timestep_explicit = void (*)(double &time,
 											   double &dtime,
 											   double &rtol_loc,
 											   double &atol_loc,
 											   double &switch_implicit);
 using ZDPlasKin_bolsig_rates = void (*)(bool &lbolsig_force);
-using ZDPlasKin_get_species_index = int (*)(const char *str, int &i, size_t str_len);
+using ZDPlasKin_get_species_index = void (*)(const char *str, int &i, size_t str_len);
 using ZDPlasKin_set_density = void (*)(const char *string, double &DENS, bool &LDENS_CONST, size_t string_len);
 using ZDPlasKin_get_density = void (*)(const char *string, double &DENS, bool &LDENS_CONST, size_t string_len);
 using ZDPlasKin_get_density_total = void (*)(double &ALL_SPECIES,
@@ -80,8 +80,8 @@ using ZDPlasKin_write_file = void (*)(const char *FILE_SPECIES,
 									  size_t FILE_SOURCE_MATRIX_len);
 using ZDPlasKin_write_qtplaskin = void (*)(double &time, bool &LFORCE_WRITE);
 using ZDPlasKin_reac_source_matrix = void (*)(double reac_rate_local[], double **reac_source_local);
-using ZDPlasKin_fex = double (*)(int &neq, double &t, double y[], double ydot[]);
-using ZDPlasKin_jex = double (*)(int &neq, double &t, double y[], int &ml, int &mu, double **pd, int &nrpd);
+using ZDPlasKin_fex = void (*)(int &neq, double &t, double y[], double ydot[]);
+using ZDPlasKin_jex = void (*)(int &neq, double &t, double y[], int &ml, int &mu, double **pd, int &nrpd);
 using ZDPlasKin_reac_rates = void (*)(double &Time);
 
 #endif //ZDPLASKIN_INCLUDE_ZDPLASKINFUNCTIONDEFS_H_
