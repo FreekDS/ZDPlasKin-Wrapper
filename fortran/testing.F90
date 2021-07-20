@@ -1,5 +1,11 @@
 !Test
 
+subroutine print(string)
+    character(*) :: string
+    write(*,*) string
+end subroutine print
+
+
 function writeTest()
     write(*,*)  "Hello World!"
 end function writeTest

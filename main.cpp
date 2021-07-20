@@ -20,8 +20,9 @@ using namespace std;
 
 
 using ADD_FT_old = int (*)(int &, int &);
-using ADD_FT = int(*)(int& a, int& b, int& result);
-using WRITE_FT = void(*)();
+using ADD_FT = int (*)(int &a, int &b, int &result);
+using WRITE_FT = void (*)();
+using PRINT_FT = void (*)(const char *, int size);
 
 /**
  * 1. dynamisch compilen/laden fortran module
@@ -42,9 +43,12 @@ int main() {
 		loader = new PlatformLoader(path);
 		loader->init();
 
-		auto add_f = loader->getFunction<WRITE_FT>("writetest");
+		auto add_f = loader->getFunction<PRINT_FT>("print");
 		int a = 1, b = 3, result;
-		add_f();
+		const std::string str = "World hello?";
+		const char* t = str.c_str();
+		int size = str.size();
+		add_f(str.c_str(), size);
 		cout << result;
 		delete loader;
 		loader = nullptr;
