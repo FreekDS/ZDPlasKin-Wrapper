@@ -31,7 +31,7 @@ PlaskinParams::PlaskinParams(const std::string &file_path)
 	  _reactionsMax(0),
 	  _reactionsLength(0) {}
 
-void PlaskinParams::readGlobals() {
+void PlaskinParams::readParams() {
 	std::ifstream file(_filePath);
 	if (file.is_open()) {
 		std::string line;

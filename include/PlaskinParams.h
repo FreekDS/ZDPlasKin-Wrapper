@@ -16,7 +16,7 @@ class PlaskinParams {
 
 	explicit PlaskinParams(const std::string &file_path);
 
-	void readGlobals();
+	void readParams();
 
 	int getSpeciesMax() const;
 	int getSpeciesElectrons() const;

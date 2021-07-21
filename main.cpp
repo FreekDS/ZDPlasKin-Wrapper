@@ -42,7 +42,7 @@ int main() {
 
 	std::string pat = R"(C:\Users\gebruiker\CLionProjects\ZDPlaskin\ZDPlasKin_2.0a_Windows\example1\zdplaskin_m.F90)";
 	PlaskinParams params(pat);
-	params.readGlobals();
+	params.readParams();
 	return 0;
 
 	std::string path = R"(C:\Users\gebruiker\CLionProjects\ZDPlaskin\cmake-build-debug\fortran\libfortran_lib.dll)";
