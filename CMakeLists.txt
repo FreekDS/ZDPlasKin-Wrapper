@@ -12,7 +12,7 @@ set(SRC
         src/WindowsLoader.cpp
         src/UnixLoader.cpp
         src/ZDPlasKinWrapper.cpp
-    )
+        src/PlaskinParams.cpp src/helpers/string_helpers.cpp)
 
 add_executable(ZDPlaskin ${SRC})
 
