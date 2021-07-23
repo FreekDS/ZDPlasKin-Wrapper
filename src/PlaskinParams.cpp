@@ -58,8 +58,12 @@ void PlaskinParams::readParams() {
 				_speciesLength = value;
 			else if (key == "reactions_max")
 				_reactionsMax = value;
-			else
+			else if (key == "reactions_length")
+				_reactionsLength = value;
+			else {
+				std::cout << key << std::endl;
 				throw std::exception();
+			}
 		}
 	} else {
 		throw std::exception();
