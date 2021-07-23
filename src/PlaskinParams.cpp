@@ -19,7 +19,7 @@ int PlaskinParams::getReactionsMax() const {
 	return _reactionsMax;
 }
 
-int PlaskinParams::GetReactionsLength() const {
+int PlaskinParams::getReactionsLength() const {
 	return _reactionsLength;
 }
 

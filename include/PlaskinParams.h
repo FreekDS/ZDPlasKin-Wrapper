@@ -22,7 +22,7 @@ class PlaskinParams {
 	int getSpeciesElectrons() const;
 	int getSpeciesLength() const;
 	int getReactionsMax() const;
-	int GetReactionsLength() const;
+	int getReactionsLength() const;
 };
 
 #endif //ZDPLASKIN_SRC_PLASKINPARAMS_H_
