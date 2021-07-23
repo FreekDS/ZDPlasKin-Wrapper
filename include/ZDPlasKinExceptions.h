@@ -23,4 +23,9 @@ class LibraryException : public ZDPlaskinException {
 	explicit LibraryException(const std::string &what) : ZDPlaskinException(what) {}
 };
 
+class CompileException : public ZDPlaskinException {
+ public:
+	explicit CompileException(const std::string &what) : ZDPlaskinException(what) {}
+};
+
 #endif //ZDPLASKIN_INCLUDE_ZDPLASKINEXCEPTIONS_H_

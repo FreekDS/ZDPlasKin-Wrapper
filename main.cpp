@@ -18,6 +18,7 @@ using PlatformLoader = UnixLoader;
 #endif
 
 #include "PlaskinParams.h"
+#include "ZDPlasKinCompiler.h"
 
 using namespace std;
 
@@ -40,6 +41,10 @@ using PRINT_FT = void (*)(const char *, size_t size);
  */
 
 int main() {
+//	ZDPlasKinCompiler::preprocess("kinet.inp");
+	ZDPlasKinCompiler::compile("-O3 -march=native -std=legacy -ffree-line-length-0");
+
+	return 0;
 	std::string path = R"(C:\Users\gebruiker\CLionProjects\ZDPlaskin\cmake-build-debug\fortran\libfortran_lib.dll)";
 	PlatformLoader loader(path);
 	try {
