@@ -1,17 +1,18 @@
 #include "helpers/string_helpers.h"
 #include <algorithm>
 
+#include <iostream>
+
 namespace utils {
 
 std::vector<std::string> split(const std::string &string, const std::string &delimiter) {
-	size_t start = 0;
-	size_t end = string.find(delimiter);
-	std::vector<std::string> result;
-	while (end != std::string::npos) {
+	size_t start = 0, end;
+	std::vector<std::string> result{};
+	while ((end = string.find(delimiter, start)) != std::string::npos) {
 		result.push_back(string.substr(start, end - start));
 		start = end + delimiter.length();
-		end = string.find(delimiter, start);
 	}
+	result.push_back(string.substr(start, string.length() - start));
 	return result;
 }
 
