@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "PlaskinParams.h"
+#include "ZDPlasKinExceptions.h"
 #include "helpers/string_helpers.h"
 
 int PlaskinParams::getSpeciesMax() const {
@@ -62,10 +63,10 @@ void PlaskinParams::readParams() {
 				_reactionsLength = value;
 			else {
 				std::cout << key << std::endl;
-				throw std::exception();
+				throw ParseException("Unknown module option '" + key + "'");
 			}
 		}
 	} else {
-		throw std::exception();
+		throw ParseException("Cannot open '" + _filePath + "'");
 	}
 }

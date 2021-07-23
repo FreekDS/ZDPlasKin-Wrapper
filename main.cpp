@@ -5,6 +5,7 @@
 #ifdef WINDOWS
 
 #include <windows/WindowsLoader.h>
+#include <helpers/string_helpers.h>
 using PlatformLoader = WindowsLoader;
 
 #endif
@@ -39,12 +40,6 @@ using PRINT_FT = void (*)(const char *, size_t size);
  */
 
 int main() {
-
-	std::string pat = R"(C:\Users\gebruiker\CLionProjects\ZDPlaskin\ZDPlasKin_2.0a_Windows\example1\zdplaskin_m.F90)";
-	PlaskinParams params(pat);
-	params.readParams();
-	return 0;
-
 	std::string path = R"(C:\Users\gebruiker\CLionProjects\ZDPlaskin\cmake-build-debug\fortran\libfortran_lib.dll)";
 	PlatformLoader loader(path);
 	try {
@@ -57,9 +52,10 @@ int main() {
 		add_f(str.c_str(), str.size());
 		cout << result;
 	}
-	catch (const std::exception &e) {
-		// TODO custom exception handling
-		return -1;
+	catch (const ZDPlaskinException &e) {
+		std::cerr << "Exception occurred" << std::endl;
+		std::cerr << e.what() << std::endl;
+		return 1;
 	}
 
 	return 0;

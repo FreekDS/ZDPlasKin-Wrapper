@@ -2,6 +2,7 @@
 #define ZDPLASKIN_LIBRARYLOADER_H
 
 #include <string>
+#include "ZDPlasKinExceptions.h"
 
 class ILibraryLoader {
  protected:
@@ -11,7 +12,7 @@ class ILibraryLoader {
 
 	void requireInitialization() const {
 		if (!_initialized) {
-			throw std::exception();
+			throw LibraryException("Library loader is not initialized, call 'init()' first");
 		}
 	}
 
@@ -25,7 +26,7 @@ class ILibraryLoader {
 		T functionAddress = (T)getFuncAddr(name);
 		if (functionAddress)
 			return functionAddress;
-		throw std::exception();
+		throw LibraryException("Cannot find symbol '" + name + "' in library");
 	}
 
 	virtual void init() = 0;

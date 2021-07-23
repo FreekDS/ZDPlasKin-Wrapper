@@ -2,6 +2,7 @@
 #define ZDPLASKIN_WINDOWSLOADER_H
 
 #include "LibraryLoader.h"
+#include "ZDPlasKinExceptions.h"
 #include <windows.h>
 
 class WindowsLoader : public ILibraryLoader {
