@@ -8,7 +8,7 @@ class ZDPlasKinWrapper {
 
 	ILibraryLoader *_lib;
 
-	static std::string lib_f(const std::string& name);
+	static std::string lib_f(const std::string &name);
 
  public:
 

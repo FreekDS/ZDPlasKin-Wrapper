@@ -18,10 +18,10 @@ using ZDPlasKin_bolsig_GetEEDF = void (*)(double **a, int &i);
 using ZDPlasKin_init = void (*)();
 using ZDPlasKin_timestep = void (*)(double &time, double &dtime);
 using ZDPlasKin_timestep_explicit = void (*)(double &time,
-											   double &dtime,
-											   double &rtol_loc,
-											   double &atol_loc,
-											   double &switch_implicit);
+											 double &dtime,
+											 double &rtol_loc,
+											 double &atol_loc,
+											 double &switch_implicit);
 using ZDPlasKin_bolsig_rates = void (*)(bool &lbolsig_force);
 using ZDPlasKin_get_species_index = void (*)(const char *str, int &i, size_t str_len);
 using ZDPlasKin_set_density = void (*)(const char *string, double &DENS, bool &LDENS_CONST, size_t string_len);

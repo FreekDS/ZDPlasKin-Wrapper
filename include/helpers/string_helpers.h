@@ -10,7 +10,7 @@ std::vector<std::string> split(const std::string &string, const std::string &del
 
 void removeSubstr(std::string &source, const std::string &to_remove, unsigned int times = 0);
 
-void removeWhitespaces(std::string& source);
+void removeWhitespaces(std::string &source);
 
 } // namespace utils
 

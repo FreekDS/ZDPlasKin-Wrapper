@@ -4,7 +4,7 @@ module testing
     public
 
     integer, parameter :: testjeee = 1
-    doubleprecision, parameter :: haha  = 1.2
+    doubleprecision, parameter :: haha = 1.2
     character(*), parameter :: TEST = "yese"
 
 contains

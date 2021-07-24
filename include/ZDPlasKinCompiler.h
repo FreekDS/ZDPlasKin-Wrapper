@@ -5,8 +5,6 @@
 #include "platform.h"
 
 class ZDPlasKinCompiler {
- private:
-	static void precompile(const std::string& opts);
  public:
 	static void preprocess(const std::string &input_file);
 	static void compile(const std::string &opts = "");

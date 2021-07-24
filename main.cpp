@@ -1,11 +1,12 @@
 #include <iostream>
+#include <filesystem>
+
 #include "platform.h"
-#include "ZDPlasKinFunctionDefs.h"
+#include "helpers/string_helpers.h"
+#include "ZDPlasKinWrapper.h"
 
 #ifdef WINDOWS
-
 #include <windows/WindowsLoader.h>
-#include <helpers/string_helpers.h>
 using PlatformLoader = WindowsLoader;
 
 #endif
@@ -22,12 +23,6 @@ using PlatformLoader = UnixLoader;
 
 using namespace std;
 
-
-using ADD_FT_old = int (*)(int &, int &);
-using ADD_FT = int (*)(int &a, int &b, int &result);
-using WRITE_FT = void (*)();
-using PRINT_FT = void (*)(const char *, size_t size);
-
 /**
  * 1. dynamisch compilen/laden fortran module
  * 		1.1 Uitvoeren van preprocessing executable (OS dependent)
@@ -41,27 +36,23 @@ using PRINT_FT = void (*)(const char *, size_t size);
  */
 
 int main() {
-//	ZDPlasKinCompiler::preprocess("kinet.inp");
-	ZDPlasKinCompiler::compile("-O3 -march=native -std=legacy -ffree-line-length-0");
-
-	return 0;
-	std::string path = R"(C:\Users\gebruiker\CLionProjects\ZDPlaskin\cmake-build-debug\fortran\libfortran_lib.dll)";
+	std::string inFile = "kinet.inp";
+	ZDPlasKinCompiler::preprocess(inFile);
+	ZDPlasKinCompiler::compile();
+	std::string srcPath = std::filesystem::canonical(inFile).string();
+	utils::removeSubstr(srcPath, inFile);
+	std::string path = srcPath + "zdplaskin.dll";
 	PlatformLoader loader(path);
+	ZDPlasKinWrapper zdplaskin{&loader};
+
 	try {
 		loader.init();
-
-		// in modules name scheme: __{module_name}_MOD_{method_name}
-		auto add_f = loader.getFunction<PRINT_FT>("print");
-		int a = 1, b = 3, result;
-		const std::string str = "World hello?";
-		add_f(str.c_str(), str.size());
-		cout << result;
+		zdplaskin.init();
 	}
 	catch (const ZDPlaskinException &e) {
 		std::cerr << "Exception occurred" << std::endl;
 		std::cerr << e.what() << std::endl;
 		return 1;
 	}
-
 	return 0;
 }

@@ -5,7 +5,7 @@
 
 class PlaskinParams {
  private:
-	const std::string& _filePath;
+	const std::string &_filePath;
 	int _speciesMax;
 	int _speciesElectrons;
 	int _speciesLength;
@@ -18,11 +18,11 @@ class PlaskinParams {
 
 	void readParams();
 
-	int getSpeciesMax() const;
-	int getSpeciesElectrons() const;
-	int getSpeciesLength() const;
-	int getReactionsMax() const;
-	int getReactionsLength() const;
+	[[nodiscard]] int getSpeciesMax() const;
+	[[nodiscard]] int getSpeciesElectrons() const;
+	[[nodiscard]] int getSpeciesLength() const;
+	[[nodiscard]] int getReactionsMax() const;
+	[[nodiscard]] int getReactionsLength() const;
 };
 
 #endif //ZDPLASKIN_SRC_PLASKINPARAMS_H_
