@@ -4,8 +4,10 @@ void WindowsLoader::init() {
 	// Todo allow for reinitialization (free first in that case)
 	_module = LoadLibrary(TEXT(_libPath));
 	if (_module == nullptr) {
+		DWORD error = GetLastError();
 		_initialized = false;
-		throw LibraryException("Cannot load library at location '" + std::string(_libPath) + "'");
+		throw LibraryException(
+			"Cannot load library at location '" + std::string(_libPath) + "' (code " + std::to_string(error) + ")");
 	}
 	_initialized = true;
 }
