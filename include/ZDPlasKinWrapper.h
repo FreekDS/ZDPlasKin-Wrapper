@@ -11,6 +11,9 @@ class ZDPlasKinWrapper {
 	static std::string lib_f(const std::string& name);
 
  public:
+
+	explicit ZDPlasKinWrapper(ILibraryLoader *lib);
+
 	void init();
 
 	// takes and returns dtime

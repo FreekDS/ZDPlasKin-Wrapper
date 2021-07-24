@@ -163,3 +163,5 @@ void ZDPlasKinWrapper::reac_rates(double time) {
 	reacRatesFunc(time);
 }
 
+ZDPlasKinWrapper::ZDPlasKinWrapper(ILibraryLoader *lib) : _lib(lib) {}
+
