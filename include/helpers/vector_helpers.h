@@ -10,11 +10,9 @@ using matrix = std::vector<std::vector<T>>;
 
 template<typename T>
 std::vector<T *> toPtrVec(matrix<T> &vec) {
-	static_assert(!vec.empty());
 	const size_t n = vec.size();
 	std::vector<T *> res;
 	for (int i = 0; i < n; i++) {
-		static_assert(!vec[i].empty());
 		res[i] = &vec[i][0];
 	}
 	return std::move(res);

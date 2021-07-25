@@ -17,7 +17,7 @@ class ZDPlasKinWrapper {
 
 	ZDPlasKinWrapper(ILibraryLoader *lib, ZDPlasKinParams *params);
 
-	void init();
+	void init(const std::string &bolsigDB = "", bool updateDB = false);
 
 	// takes and returns dtime
 	double &timestep(double time, double &dtime);

@@ -4,6 +4,7 @@
 #if defined(WIN32) || defined(WIN64)
 
 #define WINDOWS
+#define SEP "\\"
 
 #define LIB_PATH ".\\libs\\win\\"
 #define PREP_PATH LIB_PATH "preprocessor.exe"
@@ -12,6 +13,7 @@
 #elif defined(UNIX) || defined(POSIX)
 
 #define UNIX
+#define SEP "/"
 
 #if defined(POSIX)
 

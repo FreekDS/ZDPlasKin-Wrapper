@@ -1,12 +1,32 @@
 #include <vector>
 #include "helpers/vector_helpers.h"
+#include "helpers/string_helpers.h"
 #include "ZDPlasKinWrapper.h"
+#include <filesystem>
+#include "platform.h"
 
 std::string ZDPlasKinWrapper::lib_f(const std::string &name) {
 	return "__zdplaskin_MOD_zdplaskin_" + name;
 }
 
-void ZDPlasKinWrapper::init() {
+void ZDPlasKinWrapper::init(const std::string &bolsigDB, bool updateDB) {
+	// TODO capture console output
+	if (updateDB) {
+		if (!std::filesystem::exists(bolsigDB)) {
+			throw ZDPlaskinException("Could not find bolsig database file at '" + bolsigDB + "'");
+		}
+		std::string dbName = utils::split(bolsigDB, "/").back();
+		std::string destination = std::filesystem::canonical(".").string() + SEP + dbName;
+
+		std::string sourcePath = std::filesystem::canonical(bolsigDB).string();
+		if (destination != sourcePath) {
+			if (std::filesystem::exists(destination)) {
+				std::filesystem::remove(destination);
+			}
+			std::filesystem::copy(bolsigDB, destination);
+		}
+	}
+
 	auto initFunc = _lib->getFunction<ZDPlasKin_init>(lib_f("init"));
 	initFunc();
 }

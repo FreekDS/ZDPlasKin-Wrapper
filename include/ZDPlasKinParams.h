@@ -5,7 +5,7 @@
 
 class ZDPlasKinParams {
  private:
-	const std::string &_filePath;
+	std::string _filePath;
 	int _speciesMax;
 	int _speciesElectrons;
 	int _speciesLength;
