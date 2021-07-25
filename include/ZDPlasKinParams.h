@@ -3,7 +3,7 @@
 
 #include <string>
 
-class PlaskinParams {
+class ZDPlasKinParams {
  private:
 	const std::string &_filePath;
 	int _speciesMax;
@@ -14,7 +14,7 @@ class PlaskinParams {
 
  public:
 
-	explicit PlaskinParams(const std::string &file_path);
+	explicit ZDPlasKinParams(const std::string &file_path);
 
 	void readParams();
 

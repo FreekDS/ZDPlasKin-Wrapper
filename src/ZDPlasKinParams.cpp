@@ -1,30 +1,30 @@
 #include <iostream>
 #include <fstream>
-#include "PlaskinParams.h"
+#include "ZDPlasKinParams.h"
 #include "ZDPlasKinExceptions.h"
 #include "helpers/string_helpers.h"
 
-int PlaskinParams::getSpeciesMax() const {
+int ZDPlasKinParams::getSpeciesMax() const {
 	return _speciesMax;
 }
 
-int PlaskinParams::getSpeciesElectrons() const {
+int ZDPlasKinParams::getSpeciesElectrons() const {
 	return _speciesElectrons;
 }
 
-int PlaskinParams::getSpeciesLength() const {
+int ZDPlasKinParams::getSpeciesLength() const {
 	return _speciesLength;
 }
 
-int PlaskinParams::getReactionsMax() const {
+int ZDPlasKinParams::getReactionsMax() const {
 	return _reactionsMax;
 }
 
-int PlaskinParams::getReactionsLength() const {
+int ZDPlasKinParams::getReactionsLength() const {
 	return _reactionsLength;
 }
 
-PlaskinParams::PlaskinParams(const std::string &file_path)
+ZDPlasKinParams::ZDPlasKinParams(const std::string &file_path)
 	: _filePath(file_path),
 	  _speciesElectrons(0),
 	  _speciesLength(0),
@@ -32,7 +32,7 @@ PlaskinParams::PlaskinParams(const std::string &file_path)
 	  _reactionsMax(0),
 	  _reactionsLength(0) {}
 
-void PlaskinParams::readParams() {
+void ZDPlasKinParams::readParams() {
 	std::ifstream file(_filePath);
 	if (file.is_open()) {
 		std::string line;
