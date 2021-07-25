@@ -4,6 +4,8 @@
 #include "platform.h"
 #include "helpers/string_helpers.h"
 #include "ZDPlasKinWrapper.h"
+#include "ZDPlasKinParams.h"
+#include "ZDPlasKinCompiler.h"
 
 #ifdef WINDOWS
 #include <windows/WindowsLoader.h>
@@ -17,11 +19,6 @@ using PlatformLoader = WindowsLoader;
 using PlatformLoader = UnixLoader;
 
 #endif
-
-#include "PlaskinParams.h"
-#include "ZDPlasKinCompiler.h"
-
-using namespace std;
 
 /**
  * 1. dynamisch compilen/laden fortran module
@@ -43,10 +40,14 @@ int main() {
 	utils::removeSubstr(srcPath, inFile);
 	std::string path = srcPath + "zdplaskin.dll";
 	PlatformLoader loader(path);
-	ZDPlasKinWrapper zdplaskin{&loader};
+	ZDPlasKinParams parameters(srcPath + "zdplaskin_m.F90");
+	ZDPlasKinWrapper zdplaskin{&loader, &parameters};
 
 	try {
 		loader.init();
+		parameters.readParams();
+
+		// Test method to see if linked correctly
 		zdplaskin.init();
 	}
 	catch (const ZDPlaskinException &e) {
