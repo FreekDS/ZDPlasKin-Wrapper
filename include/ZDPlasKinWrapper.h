@@ -3,16 +3,19 @@
 
 #include "LibraryLoader.h"
 #include "ZDPlasKinFunctionDefs.h"
+#include "ZDPlasKinParams.h"
+#include "helpers/vector_helpers.h"
 
 class ZDPlasKinWrapper {
 
 	ILibraryLoader *_lib;
+	ZDPlasKinParams *_params;
 
 	static std::string lib_f(const std::string &name);
 
  public:
 
-	explicit ZDPlasKinWrapper(ILibraryLoader *lib);
+	ZDPlasKinWrapper(ILibraryLoader *lib, ZDPlasKinParams *params);
 
 	void init();
 
@@ -35,12 +38,23 @@ class ZDPlasKinWrapper {
 	struct DensityResult { double DENS; bool LDENS_CONST; };
 	DensityResult get_density(const std::string &string);
 
-	struct TotalDensityResult { double ALL_SPECIES, ALL_NEUTRAl, ALL_ION_POSITIVE, ALL_ION_NEGATIVE, ALL_CHARGE; };
+	struct TotalDensityResult {
+		double ALL_SPECIES;
+		double ALL_NEUTRAl;
+		double ALL_ION_POSITIVE;
+		double ALL_ION_NEGATIVE;
+		double ALL_CHARGE;
+	};
 	TotalDensityResult get_density_total();
 
 	struct RatesResult {
-		double *SOURCE_TERMS, *REACTION_RATES, **SOURCE_TERMS_MATRIX, *MEAN_DENSITY, *MEAN_SOURCE_TERMS,
-			*MEAN_REACTION_RATES, **MEAN_SOURCE_TERMS_MATRIX;
+		std::vector<double> SOURCE_TERMS;
+		std::vector<double> REACTION_RATES;
+		utils::matrix<double> SOURCE_TERMS_MATRIX;
+		std::vector<double> MEAN_DENSITY;
+		std::vector<double> MEAN_SOURCE_TERMS;
+		std::vector<double> MEAN_REACTION_RATES;
+		utils::matrix<double> MEAN_SOURCE_TERMS_MATRIX;
 	};
 	RatesResult get_rates();
 
@@ -62,20 +76,20 @@ class ZDPlasKinWrapper {
 						bool SOFT_RESET);
 
 	struct GetConditionsResult {
-		double GAS_TEMPERATURE,
-			REDUCED_FREQUENCY,
-			REDUCED_FIELD,
-			ELEC_TEMPERATURE,
-			ELEC_DRIFT_VELOCITY,
-			ELEC_DIFF_COEFF,
-			ELEC_MOBILITY_N,
-			ELEC_MU_EPS_N,
-			ELEC_DIFF_EPS_N,
-			ELEC_FREQUENCY_N,
-			ELEC_POWER_N,
-			ELEC_POWER_ELASTIC_N,
-			ELEC_POWER_INELASTIC_N,
-			**ELEC_EEDF;
+		double GAS_TEMPERATURE;
+		double REDUCED_FREQUENCY;
+		double REDUCED_FIELD;
+		double ELEC_TEMPERATURE;
+		double ELEC_DRIFT_VELOCITY;
+		double ELEC_DIFF_COEFF;
+		double ELEC_MOBILITY_N;
+		double ELEC_MU_EPS_N;
+		double ELEC_DIFF_EPS_N;
+		double ELEC_FREQUENCY_N;
+		double ELEC_POWER_N;
+		double ELEC_POWER_ELASTIC_N;
+		double ELEC_POWER_INELASTIC_N;
+		utils::matrix<double> ELEC_EEDF;
 	};
 	GetConditionsResult get_conditions();
 
@@ -90,11 +104,11 @@ class ZDPlasKinWrapper {
 
 	void write_qtplaskin(double time, bool LFORCE_WRITE = false);
 
-	double **reac_source_matrix(double reac_rate_local[]);
+	utils::matrix<double> reac_source_matrix(double reac_rate_local[]);
 
-	double *fex(int neq, double t, double y[]);
+	std::vector<double> fex(int neq, double t, double y[]);
 
-	double **jex(int neq, double t, double y[], int ml, int mu, int nrpd);
+	utils::matrix<double> jex(int neq, double t, double y[], int ml, int mu, int nrpd);
 
 	void reac_rates(double time);
 };
