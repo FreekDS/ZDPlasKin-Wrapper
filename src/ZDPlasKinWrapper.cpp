@@ -176,19 +176,19 @@ ZDPlasKinWrapper::GetConditionsResult ZDPlasKinWrapper::get_conditions() {
 	double ELEC_POWER_ELASTIC_N = 0;
 	double ELEC_POWER_INELASTIC_N = 0;
 	utils::matrix<double> ELEC_EEDF;
-	getConditionsFunc(GAS_TEMPERATURE,
-					  REDUCED_FREQUENCY,
-					  REDUCED_FIELD,
-					  ELEC_TEMPERATURE,
-					  ELEC_DRIFT_VELOCITY,
-					  ELEC_DIFF_COEFF,
-					  ELEC_MOBILITY_N,
-					  ELEC_MU_EPS_N,
-					  ELEC_DIFF_EPS_N,
-					  ELEC_FREQUENCY_N,
-					  ELEC_POWER_N,
-					  ELEC_POWER_ELASTIC_N,
-					  ELEC_POWER_INELASTIC_N,
+	getConditionsFunc(&GAS_TEMPERATURE,
+					  &REDUCED_FREQUENCY,
+					  &REDUCED_FIELD,
+					  &ELEC_TEMPERATURE,
+					  &ELEC_DRIFT_VELOCITY,
+					  &ELEC_DIFF_COEFF,
+					  &ELEC_MOBILITY_N,
+					  &ELEC_MU_EPS_N,
+					  &ELEC_DIFF_EPS_N,
+					  &ELEC_FREQUENCY_N,
+					  &ELEC_POWER_N,
+					  &ELEC_POWER_ELASTIC_N,
+					  &ELEC_POWER_INELASTIC_N,
 					  utils::toPtrVec(ELEC_EEDF).data());
 	return {
 		GAS_TEMPERATURE,
@@ -269,17 +269,17 @@ void ZDPlasKinWrapper::reac_rates(double time) {
 ZDPlasKinWrapper::ZDPlasKinWrapper(ILibraryLoader *lib, ZDPlasKinParams *params) : _lib(lib), _params(params) {}
 
 std::vector<double> ZDPlasKinWrapper::getDensity() const {
-	auto dens = _lib->getFunction<double *>("density");
+	auto dens = _lib->getFunction<double *>(lib_f("density"));
 	return utils::ptrArrayToVec(dens, _params->getSpeciesMax());
 }
 
 std::vector<int> ZDPlasKinWrapper::getSpeciesCharge() const {
-	auto speciesCharge = _lib->getFunction<int *>("species_max");
+	auto speciesCharge = _lib->getFunction<int *>(lib_f("species_max"));
 	return std::move(utils::ptrArrayToVec(speciesCharge, _params->getSpeciesMax()));
 }
 
 std::vector<std::string> ZDPlasKinWrapper::getSpeciesName() const {
-	auto speciesNames = _lib->getFunction<char **>("species_name");
+	auto speciesNames = _lib->getFunction<char **>(lib_f("species_name"));
 	auto speciesNamesVec = utils::ptrArrayToVec(speciesNames, _params->getSpeciesMax());
 	std::vector<std::string> result(_params->getSpeciesMax());
 	for (int i = 0; i < _params->getSpeciesMax(); i++) {
@@ -289,7 +289,7 @@ std::vector<std::string> ZDPlasKinWrapper::getSpeciesName() const {
 }
 
 std::vector<std::string> ZDPlasKinWrapper::getReactionSign() const {
-	auto reactionSign = _lib->getFunction<char **>("reactions_max");
+	auto reactionSign = _lib->getFunction<char **>(lib_f("reactions_max"));
 	auto reactionSignVec = utils::ptrArrayToVec(reactionSign, _params->getReactionsMax());
 	std::vector<std::string> result(_params->getReactionsMax());
 	for (int i = 0; i < _params->getReactionsMax(); i++) {
@@ -299,200 +299,496 @@ std::vector<std::string> ZDPlasKinWrapper::getReactionSign() const {
 }
 
 std::vector<bool> ZDPlasKinWrapper::getLReactionBlock() const {
-	auto LReactionBlock = _lib->getFunction<bool *>("lreaction_block");
+	auto LReactionBlock = _lib->getFunction<bool *>(lib_f("lreaction_block"));
 	return std::move(utils::ptrArrayToVec(LReactionBlock, _params->getReactionsMax()));
 }
 
 double &ZDPlasKinWrapper::timestep_explicit(double time, double &dtime, double rtol_loc, double atol_loc) {
-	auto timestepFunc = _lib->getFunction<ZDPlasKin_timestep_explicit>("timestep_implict");
+	auto timestepFunc = _lib->getFunction<ZDPlasKin_timestep_explicit>(lib_f("timestep_implict"));
 	timestepFunc(time, dtime, rtol_loc, atol_loc, nullptr);
 	return dtime;
 }
 
 void ZDPlasKinWrapper::bolsig_rates() {
-
+	auto bolsigRatesFunc = _lib->getFunction<ZDPlasKin_bolsig_rates>(lib_f("bolsig_rates"));
+	bolsigRatesFunc(nullptr);
 }
 
 void ZDPlasKinWrapper::set_density(const std::string &string) {
-
+	// TODO check if this is useful to have or not
+	auto setDensityFunc = _lib->getFunction<ZDPlasKin_set_density>(lib_f("set_density"));
+	setDensityFunc(string.c_str(), nullptr, nullptr, string.size());
 }
 
 void ZDPlasKinWrapper::set_density(const std::string &string, bool LDENS_CONS) {
-
+	auto setDensityFunc = _lib->getFunction<ZDPlasKin_set_density>(lib_f("set_density"));
+	setDensityFunc(string.c_str(), nullptr, &LDENS_CONS, string.size());
 }
 
 double ZDPlasKinWrapper::get_density_dens(const std::string &string) {
-	return 0;
+	auto getDensityFunc = _lib->getFunction<ZDPlasKin_get_density>(lib_f("get_density"));
+	double dens = 0;
+	getDensityFunc(string.c_str(), &dens, nullptr, string.size());
+	return dens;
 }
 
 bool ZDPlasKinWrapper::get_density_ldens_cons(const std::string &string) {
-	return false;
+	auto getDensityFunc = _lib->getFunction<ZDPlasKin_get_density>(lib_f("get_density"));
+	bool ldens_cons = false;
+	getDensityFunc(string.c_str(), nullptr, &ldens_cons, string.size());
+	return ldens_cons;
 }
 
 double ZDPlasKinWrapper::get_density_total_species() {
-	return 0;
+	auto getDensityTotalFunc = _lib->getFunction<ZDPlasKin_get_density_total>(lib_f("get_density_total"));
+	double species = 0;
+	getDensityTotalFunc(&species, nullptr, nullptr, nullptr, nullptr);
+	return species;
 }
 
 double ZDPlasKinWrapper::get_density_total_neutral() {
-	return 0;
+	auto getDensityTotalFunc = _lib->getFunction<ZDPlasKin_get_density_total>(lib_f("get_density_total"));
+	double neutral = 0;
+	getDensityTotalFunc(nullptr, &neutral, nullptr, nullptr, nullptr);
+	return neutral;
 }
 
 double ZDPlasKinWrapper::get_density_total_ion_positive() {
-	return 0;
+	auto getDensityTotalFunc = _lib->getFunction<ZDPlasKin_get_density_total>(lib_f("get_density_total"));
+	double ion_positive = 0;
+	getDensityTotalFunc(nullptr, nullptr, &ion_positive, nullptr, nullptr);
+	return ion_positive;
 }
 
 double ZDPlasKinWrapper::get_density_total_ion_negative() {
-	return 0;
+	auto getDensityTotalFunc = _lib->getFunction<ZDPlasKin_get_density_total>(lib_f("get_density_total"));
+	double ion_negative = 0;
+	getDensityTotalFunc(nullptr, nullptr, nullptr, &ion_negative, nullptr);
+	return ion_negative;
 }
 
 double ZDPlasKinWrapper::get_density_total_charge() {
-	return 0;
+	auto getDensityTotalFunc = _lib->getFunction<ZDPlasKin_get_density_total>(lib_f("get_density_total"));
+	double charge = 0;
+	getDensityTotalFunc(nullptr, nullptr, nullptr, nullptr, &charge);
+	return charge;
 }
 
 std::vector<double> ZDPlasKinWrapper::get_rates_source_terms() {
-	return std::vector<double>();
+	auto getRatesFunc = _lib->getFunction<ZDPlasKin_get_rates>(lib_f("get_rates"));
+	std::vector<double> source_terms(_params->getSpeciesMax(), 0);
+	getRatesFunc(source_terms.data(), nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
+	return source_terms;
 }
 
 std::vector<double> ZDPlasKinWrapper::get_rates_reaction_rates() {
-	return std::vector<double>();
+	auto getRatesFunc = _lib->getFunction<ZDPlasKin_get_rates>(lib_f("get_rates"));
+	std::vector<double> reaction_rates(_params->getReactionsMax(), 0);
+	getRatesFunc(nullptr, reaction_rates.data(), nullptr, nullptr, nullptr, nullptr, nullptr);
+	return reaction_rates;
 }
 
 utils::matrix<double> ZDPlasKinWrapper::get_rates_source_terms_matrix() {
-	return utils::matrix<double>();
+	auto getRatesFunc = _lib->getFunction<ZDPlasKin_get_rates>(lib_f("get_rates"));
+	auto source_terms_matrix = utils::matrixFromSizes<double>(_params->getSpeciesMax(), _params->getReactionsMax());
+	getRatesFunc(nullptr, nullptr, utils::toPtrVec(source_terms_matrix).data(), nullptr, nullptr, nullptr, nullptr);
+	return source_terms_matrix;
 }
 
 std::vector<double> ZDPlasKinWrapper::get_rates_mean_density() {
-	return std::vector<double>();
+	auto getRatesFunc = _lib->getFunction<ZDPlasKin_get_rates>(lib_f("get_rates"));
+	std::vector<double> mean_density(_params->getSpeciesMax(), 0);
+	getRatesFunc(nullptr, nullptr, nullptr, mean_density.data(), nullptr, nullptr, nullptr);
+	return mean_density;
 }
 
 std::vector<double> ZDPlasKinWrapper::get_rates_mean_source_terms() {
-	return std::vector<double>();
+	auto getRatesFunc = _lib->getFunction<ZDPlasKin_get_rates>(lib_f("get_rates"));
+	std::vector<double> mean_source_terms(_params->getSpeciesMax(), 0);
+	getRatesFunc(nullptr, nullptr, nullptr, nullptr, mean_source_terms.data(), nullptr, nullptr);
+	return mean_source_terms;
 }
 
 std::vector<double> ZDPlasKinWrapper::get_rates_mean_reaction_rates() {
-	return std::vector<double>();
+	auto getRatesFunc = _lib->getFunction<ZDPlasKin_get_rates>(lib_f("get_rates"));
+	std::vector<double> mean_reaction_rate(_params->getSpeciesMax(), 0);
+	getRatesFunc(nullptr, nullptr, nullptr, nullptr, nullptr, mean_reaction_rate.data(), nullptr);
+	return mean_reaction_rate;
 }
 
 utils::matrix<double> ZDPlasKinWrapper::get_rates_mean_source_terms_matrix() {
-	return utils::matrix<double>();
+	auto getRatesFunc = _lib->getFunction<ZDPlasKin_get_rates>(lib_f("get_rates"));
+	auto mean_source_terms_matrix = utils::matrixFromSizes<double>(
+		_params->getSpeciesMax(),
+		_params->getReactionsMax()
+	);
+	getRatesFunc(nullptr,
+				 nullptr,
+				 nullptr,
+				 nullptr,
+				 nullptr,
+				 nullptr,
+				 utils::toPtrVec(mean_source_terms_matrix).data());
+	return mean_source_terms_matrix;
 }
 
 void ZDPlasKinWrapper::set_config_atol(double atol) {
-
+	auto setConfigFunc = _lib->getFunction<ZDPlasKin_set_config>(lib_f("set_config"));
+	setConfigFunc(&atol, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
 }
 
 void ZDPlasKinWrapper::set_config_rtol(double rtol) {
-
+	auto setConfigFunc = _lib->getFunction<ZDPlasKin_set_config>(lib_f("set_config"));
+	setConfigFunc(nullptr, &rtol, nullptr, nullptr, nullptr, nullptr, nullptr);
 }
 
 void ZDPlasKinWrapper::set_config_silence_mode(bool silence_mode) {
-
+	auto setConfigFunc = _lib->getFunction<ZDPlasKin_set_config>(lib_f("set_config"));
+	setConfigFunc(nullptr, nullptr, &silence_mode, nullptr, nullptr, nullptr, nullptr);
 }
 
 void ZDPlasKinWrapper::set_config_stat_accum(bool stat_accum) {
-
+	auto setConfigFunc = _lib->getFunction<ZDPlasKin_set_config>(lib_f("set_config"));
+	setConfigFunc(nullptr, nullptr, nullptr, &stat_accum, nullptr, nullptr, nullptr);
 }
 
 void ZDPlasKinWrapper::set_config_qtplaskin_save(bool save) {
-
+	auto setConfigFunc = _lib->getFunction<ZDPlasKin_set_config>(lib_f("set_config"));
+	setConfigFunc(nullptr, nullptr, nullptr, nullptr, &save, nullptr, nullptr);
 }
 
 void ZDPlasKinWrapper::set_config_bolsig_ee_frac(double bolsig_ee_frac) {
-
+	auto setConfigFunc = _lib->getFunction<ZDPlasKin_set_config>(lib_f("set_config"));
+	setConfigFunc(nullptr, nullptr, nullptr, nullptr, nullptr, &bolsig_ee_frac, nullptr);
 }
 
 void ZDPlasKinWrapper::set_config_bolsig_ignore_gas_temperature(bool bolsig_ignore_gas_temperature) {
-
+	auto setConfigFunc = _lib->getFunction<ZDPlasKin_set_config>(lib_f("set_config"));
+	setConfigFunc(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &bolsig_ignore_gas_temperature);
 }
 
 void ZDPlasKinWrapper::set_condition_gas_temperature(double gas_temperature) {
-
+	auto setConditionFunc = _lib->getFunction<ZDPlasKin_set_conditions>(lib_f("set_conditions"));
+	setConditionFunc(&gas_temperature, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
 }
 
 void ZDPlasKinWrapper::set_condition_reduced_frequency(double reduced_frequency) {
-
+	auto setConditionFunc = _lib->getFunction<ZDPlasKin_set_conditions>(lib_f("set_conditions"));
+	setConditionFunc(nullptr, &reduced_frequency, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
 }
 
 void ZDPlasKinWrapper::set_condition_reduced_field(double reduced_field) {
-
+	auto setConditionFunc = _lib->getFunction<ZDPlasKin_set_conditions>(lib_f("set_conditions"));
+	setConditionFunc(nullptr, nullptr, &reduced_field, nullptr, nullptr, nullptr, nullptr, nullptr);
 }
 
 void ZDPlasKinWrapper::set_condition_reduced_elec_temperature(double elec_temperature) {
-
+	auto setConditionFunc = _lib->getFunction<ZDPlasKin_set_conditions>(lib_f("set_conditions"));
+	setConditionFunc(nullptr, nullptr, nullptr, &elec_temperature, nullptr, nullptr, nullptr, nullptr);
 }
 
 void ZDPlasKinWrapper::set_condition_reduced_gas_heating(bool gas_heating) {
-
+	auto setConditionFunc = _lib->getFunction<ZDPlasKin_set_conditions>(lib_f("set_conditions"));
+	setConditionFunc(nullptr, nullptr, nullptr, nullptr, &gas_heating, nullptr, nullptr, nullptr);
 }
 
 void ZDPlasKinWrapper::set_condition_reduced_spec_heat_ratio(double spec_heat_ratio) {
-
+	auto setConditionFunc = _lib->getFunction<ZDPlasKin_set_conditions>(lib_f("set_conditions"));
+	setConditionFunc(nullptr, nullptr, nullptr, nullptr, nullptr, &spec_heat_ratio, nullptr, nullptr);
 }
 
 void ZDPlasKinWrapper::set_condition_reduced_spec_heat_source(double heat_source) {
-
+	auto setConditionFunc = _lib->getFunction<ZDPlasKin_set_conditions>(lib_f("set_conditions"));
+	setConditionFunc(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &heat_source, nullptr);
 }
 
 void ZDPlasKinWrapper::set_condition_reduced_soft_reset(bool soft_reset) {
-
+	auto setConditionFunc = _lib->getFunction<ZDPlasKin_set_conditions>(lib_f("set_conditions"));
+	setConditionFunc(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &soft_reset);
 }
 
 double ZDPlasKinWrapper::get_condition_gas_temperature() {
-	return 0;
+	auto getConditionFunc = _lib->getFunction<ZDPlasKin_get_conditions>(lib_f("get_conditions"));
+	double gas_temperature = 0;
+	getConditionFunc(&gas_temperature,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr);
+	return gas_temperature;
 }
 
 double ZDPlasKinWrapper::get_condition_reduced_frequency() {
-	return 0;
+	auto getConditionFunc = _lib->getFunction<ZDPlasKin_get_conditions>(lib_f("get_conditions"));
+	double reduced_frequency = 0;
+	getConditionFunc(nullptr,
+					 &reduced_frequency,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr);
+	return reduced_frequency;
 }
 
 double ZDPlasKinWrapper::get_condition_reduced_field() {
-	return 0;
+	auto getConditionFunc = _lib->getFunction<ZDPlasKin_get_conditions>(lib_f("get_conditions"));
+	double reduced_field = 0;
+	getConditionFunc(nullptr,
+					 nullptr,
+					 &reduced_field,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr);
+	return reduced_field;
 }
 
 double ZDPlasKinWrapper::get_condition_elec_temperature() {
-	return 0;
+	auto getConditionFunc = _lib->getFunction<ZDPlasKin_get_conditions>(lib_f("get_conditions"));
+	double elec_temperature = 0;
+	getConditionFunc(nullptr,
+					 nullptr,
+					 nullptr,
+					 &elec_temperature,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr);
+	return elec_temperature;
 }
 
 double ZDPlasKinWrapper::get_condition_elec_drift_velocity() {
-	return 0;
+	auto getConditionFunc = _lib->getFunction<ZDPlasKin_get_conditions>(lib_f("get_conditions"));
+	double drift_velocity = 0;
+	getConditionFunc(nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 &drift_velocity,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr);
+	return drift_velocity;
 }
 
 double ZDPlasKinWrapper::get_condition_elec_diff_coeff() {
-	return 0;
+	auto getConditionFunc = _lib->getFunction<ZDPlasKin_get_conditions>(lib_f("get_conditions"));
+	double elec_diff_coeff = 0;
+	getConditionFunc(nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 &elec_diff_coeff,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr);
+	return elec_diff_coeff;
 }
 
 double ZDPlasKinWrapper::get_condition_elec_mobility_n() {
-	return 0;
+	auto getConditionFunc = _lib->getFunction<ZDPlasKin_get_conditions>(lib_f("get_conditions"));
+	double elec_mobility_n = 0;
+	getConditionFunc(nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 &elec_mobility_n,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr);
+	return elec_mobility_n;
 }
 
 double ZDPlasKinWrapper::get_condition_elec_mu_eps_n() {
-	return 0;
+	auto getConditionFunc = _lib->getFunction<ZDPlasKin_get_conditions>(lib_f("get_conditions"));
+	double elec_mu_eps_n = 0;
+	getConditionFunc(nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 &elec_mu_eps_n,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr);
+	return elec_mu_eps_n;
 }
 
 double ZDPlasKinWrapper::get_condition_elec_diff_eps_n() {
-	return 0;
+	auto getConditionFunc = _lib->getFunction<ZDPlasKin_get_conditions>(lib_f("get_conditions"));
+	double elec_diff_eps_n = 0;
+	getConditionFunc(nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 &elec_diff_eps_n,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr);
+	return elec_diff_eps_n;
 }
 
 double ZDPlasKinWrapper::get_condition_elec_frequency_n() {
-	return 0;
+	auto getConditionFunc = _lib->getFunction<ZDPlasKin_get_conditions>(lib_f("get_conditions"));
+	double elec_frequency_n = 0;
+	getConditionFunc(nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 &elec_frequency_n,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr);
+	return elec_frequency_n;
 }
 
 double ZDPlasKinWrapper::get_condition_elec_power_n() {
-	return 0;
+	auto getConditionFunc = _lib->getFunction<ZDPlasKin_get_conditions>(lib_f("get_conditions"));
+	double elec_power_n = 0;
+	getConditionFunc(nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 &elec_power_n,
+					 nullptr,
+					 nullptr,
+					 nullptr);
+	return elec_power_n;
 }
 
 double ZDPlasKinWrapper::get_condition_elec_power_elastic_n() {
-	return 0;
+	auto getConditionFunc = _lib->getFunction<ZDPlasKin_get_conditions>(lib_f("get_conditions"));
+	double elec_power_elastic_n = 0;
+	getConditionFunc(nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 &elec_power_elastic_n,
+					 nullptr,
+					 nullptr);
+	return elec_power_elastic_n;
 }
 
 double ZDPlasKinWrapper::get_condition_elec_power_inelastic_n() {
-	return 0;
+	auto getConditionFunc = _lib->getFunction<ZDPlasKin_get_conditions>(lib_f("get_conditions"));
+	double elec_power_inelastic_n = 0;
+	getConditionFunc(nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 &elec_power_inelastic_n,
+					 nullptr);
+	return elec_power_inelastic_n;
 }
 
 utils::matrix<double> ZDPlasKinWrapper::get_condition_elec_eedf() {
-	return utils::matrix<double>();
+	// todo: check if it is required to pass elec_eedf matrix as parameter rather than creating it in func
+	auto getConditionFunc = _lib->getFunction<ZDPlasKin_get_conditions>(lib_f("get_conditions"));
+	auto elec_eedf = utils::matrixFromSizes<double>(_params->getSpeciesMax(), _params->getReactionsMax());
+	getConditionFunc(nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 nullptr,
+					 utils::toPtrVec(elec_eedf).data());
+	return elec_eedf;
 }
 void ZDPlasKinWrapper::write_qtplaskin(double time) {
-
+	auto writeQTPlaskinFunc = _lib->getFunction<ZDPlasKin_write_qtplaskin>(lib_f("write_qtplaskin"));
+	writeQTPlaskinFunc(time, nullptr);
 }
 
