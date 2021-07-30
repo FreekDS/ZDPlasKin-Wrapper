@@ -27,6 +27,15 @@ matrix<T> matrixFromSizes(unsigned i, unsigned j) {
 	return result;
 }
 
+template<typename T>
+std::vector<T> ptrArrayToVec(T *ptrArray, size_t size) {
+	std::vector<T> res(size);
+	for (int i = 0; i < size; i++) {
+		res[i] = ptrArray[i];
+	}
+	return res;
+}
+
 } // namespace utils
 
 
