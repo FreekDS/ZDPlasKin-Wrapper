@@ -43,14 +43,14 @@ double &ZDPlasKinWrapper::timestep_explicit(double time,
 											double atol_loc,
 											double switch_implicit) {
 	auto timestepExplicitFunc =
-		_lib->getFunction<ZDPlasKin_timestep_explicit_switch_implict>(lib_f("timestep_explicit"));
-	timestepExplicitFunc(time, dtime, rtol_loc, atol_loc, switch_implicit);
+		_lib->getFunction<ZDPlasKin_timestep_explicit>(lib_f("timestep_explicit"));
+	timestepExplicitFunc(time, dtime, rtol_loc, atol_loc, &switch_implicit);
 	return dtime;
 }
 
 void ZDPlasKinWrapper::bolsig_rates(bool lbolsig_force) {
-	auto bolsigRatesFunc = _lib->getFunction<ZDPlasKin_bolsig_rates_lforce>(lib_f("bolsig_rates"));
-	bolsigRatesFunc(lbolsig_force);
+	auto bolsigRatesFunc = _lib->getFunction<ZDPlasKin_bolsig_rates>(lib_f("bolsig_rates"));
+	bolsigRatesFunc(&lbolsig_force);
 }
 
 int ZDPlasKinWrapper::get_species_index(const std::string &string) {
@@ -62,14 +62,14 @@ int ZDPlasKinWrapper::get_species_index(const std::string &string) {
 
 void ZDPlasKinWrapper::set_density(const std::string &string, double DENS, bool LDENS_CONST) {
 	auto setDensityFunc = _lib->getFunction<ZDPlasKin_set_density>(lib_f("set_density"));
-	setDensityFunc(string.c_str(), DENS, LDENS_CONST, string.size());
+	setDensityFunc(string.c_str(), &DENS, &LDENS_CONST, string.size());
 }
 
 ZDPlasKinWrapper::DensityResult ZDPlasKinWrapper::get_density(const std::string &string) {
 	auto getDensityFunc = _lib->getFunction<ZDPlasKin_get_density>(lib_f("get_density"));
 	double DENS = 0;
 	bool LDENS_CONST = false;
-	getDensityFunc(string.c_str(), DENS, LDENS_CONST, string.size());
+	getDensityFunc(string.c_str(), &DENS, &LDENS_CONST, string.size());
 	return {DENS, LDENS_CONST};
 }
 
@@ -80,7 +80,7 @@ ZDPlasKinWrapper::TotalDensityResult ZDPlasKinWrapper::get_density_total() {
 	double ALL_ION_NEGATIVE = 0;
 	double ALL_ION_POSITIVE = 0;
 	double ALL_CHARGE = 0;
-	getDensityTotalFunc(ALL_SPECIES, ALL_NEUTRAL, ALL_ION_POSITIVE, ALL_ION_NEGATIVE, ALL_CHARGE);
+	getDensityTotalFunc(&ALL_SPECIES, &ALL_NEUTRAL, &ALL_ION_POSITIVE, &ALL_ION_NEGATIVE, &ALL_CHARGE);
 	return {
 		ALL_SPECIES,
 		ALL_NEUTRAL,
@@ -132,7 +132,13 @@ void ZDPlasKinWrapper::set_config(double ATOL,
 								  double BOLSIG_EE_FRAC,
 								  bool BOLSIG_IGNORE_GAS_TEMPERATURE) {
 	auto setConfigFunc = _lib->getFunction<ZDPlasKin_set_config>(lib_f("set_config"));
-	setConfigFunc(ATOL, RTOL, SILENCE_MODE, STAT_ACCUM, QTPLASKIN_SAVE, BOLSIG_EE_FRAC, BOLSIG_IGNORE_GAS_TEMPERATURE);
+	setConfigFunc(&ATOL,
+				  &RTOL,
+				  &SILENCE_MODE,
+				  &STAT_ACCUM,
+				  &QTPLASKIN_SAVE,
+				  &BOLSIG_EE_FRAC,
+				  &BOLSIG_IGNORE_GAS_TEMPERATURE);
 }
 
 void ZDPlasKinWrapper::set_conditions(double GAS_TEMPERATURE,
@@ -144,14 +150,14 @@ void ZDPlasKinWrapper::set_conditions(double GAS_TEMPERATURE,
 									  double HEAT_SOURCE,
 									  bool SOFT_RESET) {
 	auto setConditionsFunc = _lib->getFunction<ZDPlasKin_set_conditions>(lib_f("set_conditions"));
-	setConditionsFunc(GAS_TEMPERATURE,
-					  REDUCED_FREQUENCY,
-					  REDUCED_FIELD,
-					  ELEC_TEMPERATURE,
-					  GAS_HEATING,
-					  SPEC_HEAT_RATIO,
-					  HEAT_SOURCE,
-					  SOFT_RESET);
+	setConditionsFunc(&GAS_TEMPERATURE,
+					  &REDUCED_FREQUENCY,
+					  &REDUCED_FIELD,
+					  &ELEC_TEMPERATURE,
+					  &GAS_HEATING,
+					  &SPEC_HEAT_RATIO,
+					  &HEAT_SOURCE,
+					  &SOFT_RESET);
 }
 
 ZDPlasKinWrapper::GetConditionsResult ZDPlasKinWrapper::get_conditions() {
@@ -217,18 +223,21 @@ void ZDPlasKinWrapper::write_file(const std::string &FILE_SPECIES,
 								  const std::string &FILE_SOURCE_MATRIX,
 								  int FILE_UNIT) {
 	auto writeFileFunc = _lib->getFunction<ZDPlasKin_write_file>(lib_f("write_file"));
+	size_t fileSpeciesSize = FILE_SPECIES.size();
+	size_t fileReactionsSize = FILE_REACTIONS.size();
+	size_t fileSourceMatrixSize = FILE_SOURCE_MATRIX.size();
 	writeFileFunc(FILE_SPECIES.c_str(),
 				  FILE_REACTIONS.c_str(),
 				  FILE_SOURCE_MATRIX.c_str(),
-				  FILE_UNIT,
-				  FILE_SPECIES.size(),
-				  FILE_REACTIONS.size(),
-				  FILE_SOURCE_MATRIX.size());
+				  &FILE_UNIT,
+				  &fileSpeciesSize,
+				  &fileReactionsSize,
+				  &fileSourceMatrixSize);
 }
 
 void ZDPlasKinWrapper::write_qtplaskin(double time, bool LFORCE_WRITE) {
-	auto writeQTPlaskinFunc = _lib->getFunction<ZDPlasKin_write_qtplaskin_lforce_write>(lib_f("write_qtplaskin"));
-	writeQTPlaskinFunc(time, LFORCE_WRITE);
+	auto writeQTPlaskinFunc = _lib->getFunction<ZDPlasKin_write_qtplaskin>(lib_f("write_qtplaskin"));
+	writeQTPlaskinFunc(time, &LFORCE_WRITE);
 }
 
 utils::matrix<double> ZDPlasKinWrapper::reac_source_matrix(double *reac_rate_local) {
@@ -296,7 +305,7 @@ std::vector<bool> ZDPlasKinWrapper::getLReactionBlock() const {
 
 double &ZDPlasKinWrapper::timestep_explicit(double time, double &dtime, double rtol_loc, double atol_loc) {
 	auto timestepFunc = _lib->getFunction<ZDPlasKin_timestep_explicit>("timestep_implict");
-	timestepFunc(time, dtime, rtol_loc, atol_loc);
+	timestepFunc(time, dtime, rtol_loc, atol_loc, nullptr);
 	return dtime;
 }
 
