@@ -42,13 +42,14 @@ double &ZDPlasKinWrapper::timestep_explicit(double time,
 											double rtol_loc,
 											double atol_loc,
 											double switch_implicit) {
-	auto timestepExplicitFunc = _lib->getFunction<ZDPlasKin_timestep_explicit>(lib_f("timestep_explicit"));
+	auto timestepExplicitFunc =
+		_lib->getFunction<ZDPlasKin_timestep_explicit_switch_implict>(lib_f("timestep_explicit"));
 	timestepExplicitFunc(time, dtime, rtol_loc, atol_loc, switch_implicit);
 	return dtime;
 }
 
 void ZDPlasKinWrapper::bolsig_rates(bool lbolsig_force) {
-	auto bolsigRatesFunc = _lib->getFunction<ZDPlasKin_bolsig_rates>(lib_f("bolsig_rates"));
+	auto bolsigRatesFunc = _lib->getFunction<ZDPlasKin_bolsig_rates_lforce>(lib_f("bolsig_rates"));
 	bolsigRatesFunc(lbolsig_force);
 }
 
@@ -226,7 +227,7 @@ void ZDPlasKinWrapper::write_file(const std::string &FILE_SPECIES,
 }
 
 void ZDPlasKinWrapper::write_qtplaskin(double time, bool LFORCE_WRITE) {
-	auto writeQTPlaskinFunc = _lib->getFunction<ZDPlasKin_write_qtplaskin>(lib_f("write_qtplaskin"));
+	auto writeQTPlaskinFunc = _lib->getFunction<ZDPlasKin_write_qtplaskin_lforce_write>(lib_f("write_qtplaskin"));
 	writeQTPlaskinFunc(time, LFORCE_WRITE);
 }
 
@@ -257,4 +258,232 @@ void ZDPlasKinWrapper::reac_rates(double time) {
 }
 
 ZDPlasKinWrapper::ZDPlasKinWrapper(ILibraryLoader *lib, ZDPlasKinParams *params) : _lib(lib), _params(params) {}
+
+std::vector<double> ZDPlasKinWrapper::getDensity() const {
+	auto dens = _lib->getFunction<double *>("density");
+	return utils::ptrArrayToVec(dens, _params->getSpeciesMax());
+}
+
+std::vector<int> ZDPlasKinWrapper::getSpeciesCharge() const {
+	auto speciesCharge = _lib->getFunction<int *>("species_max");
+	return std::move(utils::ptrArrayToVec(speciesCharge, _params->getSpeciesMax()));
+}
+
+std::vector<std::string> ZDPlasKinWrapper::getSpeciesName() const {
+	auto speciesNames = _lib->getFunction<char **>("species_name");
+	auto speciesNamesVec = utils::ptrArrayToVec(speciesNames, _params->getSpeciesMax());
+	std::vector<std::string> result(_params->getSpeciesMax());
+	for (int i = 0; i < _params->getSpeciesMax(); i++) {
+		result[i] = std::string(speciesNamesVec[i]);
+	}
+	return std::move(result);
+}
+
+std::vector<std::string> ZDPlasKinWrapper::getReactionSign() const {
+	auto reactionSign = _lib->getFunction<char **>("reactions_max");
+	auto reactionSignVec = utils::ptrArrayToVec(reactionSign, _params->getReactionsMax());
+	std::vector<std::string> result(_params->getReactionsMax());
+	for (int i = 0; i < _params->getReactionsMax(); i++) {
+		result[i] = std::string(reactionSignVec[i]);
+	}
+	return std::move(result);
+}
+
+std::vector<bool> ZDPlasKinWrapper::getLReactionBlock() const {
+	auto LReactionBlock = _lib->getFunction<bool *>("lreaction_block");
+	return std::move(utils::ptrArrayToVec(LReactionBlock, _params->getReactionsMax()));
+}
+
+double &ZDPlasKinWrapper::timestep_explicit(double time, double &dtime, double rtol_loc, double atol_loc) {
+	auto timestepFunc = _lib->getFunction<ZDPlasKin_timestep_explicit>("timestep_implict");
+	timestepFunc(time, dtime, rtol_loc, atol_loc);
+	return dtime;
+}
+
+void ZDPlasKinWrapper::bolsig_rates() {
+
+}
+
+void ZDPlasKinWrapper::set_density(const std::string &string) {
+
+}
+
+void ZDPlasKinWrapper::set_density(const std::string &string, bool LDENS_CONS) {
+
+}
+
+double ZDPlasKinWrapper::get_density_dens(const std::string &string) {
+	return 0;
+}
+
+bool ZDPlasKinWrapper::get_density_ldens_cons(const std::string &string) {
+	return false;
+}
+
+double ZDPlasKinWrapper::get_density_total_species() {
+	return 0;
+}
+
+double ZDPlasKinWrapper::get_density_total_neutral() {
+	return 0;
+}
+
+double ZDPlasKinWrapper::get_density_total_ion_positive() {
+	return 0;
+}
+
+double ZDPlasKinWrapper::get_density_total_ion_negative() {
+	return 0;
+}
+
+double ZDPlasKinWrapper::get_density_total_charge() {
+	return 0;
+}
+
+std::vector<double> ZDPlasKinWrapper::get_rates_source_terms() {
+	return std::vector<double>();
+}
+
+std::vector<double> ZDPlasKinWrapper::get_rates_reaction_rates() {
+	return std::vector<double>();
+}
+
+utils::matrix<double> ZDPlasKinWrapper::get_rates_source_terms_matrix() {
+	return utils::matrix<double>();
+}
+
+std::vector<double> ZDPlasKinWrapper::get_rates_mean_density() {
+	return std::vector<double>();
+}
+
+std::vector<double> ZDPlasKinWrapper::get_rates_mean_source_terms() {
+	return std::vector<double>();
+}
+
+std::vector<double> ZDPlasKinWrapper::get_rates_mean_reaction_rates() {
+	return std::vector<double>();
+}
+
+utils::matrix<double> ZDPlasKinWrapper::get_rates_mean_source_terms_matrix() {
+	return utils::matrix<double>();
+}
+
+void ZDPlasKinWrapper::set_config_atol(double atol) {
+
+}
+
+void ZDPlasKinWrapper::set_config_rtol(double rtol) {
+
+}
+
+void ZDPlasKinWrapper::set_config_silence_mode(bool silence_mode) {
+
+}
+
+void ZDPlasKinWrapper::set_config_stat_accum(bool stat_accum) {
+
+}
+
+void ZDPlasKinWrapper::set_config_qtplaskin_save(bool save) {
+
+}
+
+void ZDPlasKinWrapper::set_config_bolsig_ee_frac(double bolsig_ee_frac) {
+
+}
+
+void ZDPlasKinWrapper::set_config_bolsig_ignore_gas_temperature(bool bolsig_ignore_gas_temperature) {
+
+}
+
+void ZDPlasKinWrapper::set_condition_gas_temperature(double gas_temperature) {
+
+}
+
+void ZDPlasKinWrapper::set_condition_reduced_frequency(double reduced_frequency) {
+
+}
+
+void ZDPlasKinWrapper::set_condition_reduced_field(double reduced_field) {
+
+}
+
+void ZDPlasKinWrapper::set_condition_reduced_elec_temperature(double elec_temperature) {
+
+}
+
+void ZDPlasKinWrapper::set_condition_reduced_gas_heating(bool gas_heating) {
+
+}
+
+void ZDPlasKinWrapper::set_condition_reduced_spec_heat_ratio(double spec_heat_ratio) {
+
+}
+
+void ZDPlasKinWrapper::set_condition_reduced_spec_heat_source(double heat_source) {
+
+}
+
+void ZDPlasKinWrapper::set_condition_reduced_soft_reset(bool soft_reset) {
+
+}
+
+double ZDPlasKinWrapper::get_condition_gas_temperature() {
+	return 0;
+}
+
+double ZDPlasKinWrapper::get_condition_reduced_frequency() {
+	return 0;
+}
+
+double ZDPlasKinWrapper::get_condition_reduced_field() {
+	return 0;
+}
+
+double ZDPlasKinWrapper::get_condition_elec_temperature() {
+	return 0;
+}
+
+double ZDPlasKinWrapper::get_condition_elec_drift_velocity() {
+	return 0;
+}
+
+double ZDPlasKinWrapper::get_condition_elec_diff_coeff() {
+	return 0;
+}
+
+double ZDPlasKinWrapper::get_condition_elec_mobility_n() {
+	return 0;
+}
+
+double ZDPlasKinWrapper::get_condition_elec_mu_eps_n() {
+	return 0;
+}
+
+double ZDPlasKinWrapper::get_condition_elec_diff_eps_n() {
+	return 0;
+}
+
+double ZDPlasKinWrapper::get_condition_elec_frequency_n() {
+	return 0;
+}
+
+double ZDPlasKinWrapper::get_condition_elec_power_n() {
+	return 0;
+}
+
+double ZDPlasKinWrapper::get_condition_elec_power_elastic_n() {
+	return 0;
+}
+
+double ZDPlasKinWrapper::get_condition_elec_power_inelastic_n() {
+	return 0;
+}
+
+utils::matrix<double> ZDPlasKinWrapper::get_condition_elec_eedf() {
+	return utils::matrix<double>();
+}
+void ZDPlasKinWrapper::write_qtplaskin(double time) {
+
+}
 
