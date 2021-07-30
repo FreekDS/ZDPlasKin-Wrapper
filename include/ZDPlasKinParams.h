@@ -14,7 +14,7 @@ class ZDPlasKinParams {
 
  public:
 
-	explicit ZDPlasKinParams(const std::string &file_path);
+	explicit ZDPlasKinParams(std::string file_path);
 
 	void readParams();
 

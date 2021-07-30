@@ -24,8 +24,8 @@ int ZDPlasKinParams::getReactionsLength() const {
 	return _reactionsLength;
 }
 
-ZDPlasKinParams::ZDPlasKinParams(const std::string &file_path)
-	: _filePath(file_path),
+ZDPlasKinParams::ZDPlasKinParams(std::string file_path)
+	: _filePath(std::move(file_path)),
 	  _speciesElectrons(0),
 	  _speciesLength(0),
 	  _speciesMax(0),
