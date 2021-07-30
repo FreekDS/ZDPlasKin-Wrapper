@@ -21,16 +21,16 @@ using ZDPlasKin_timestep_explicit = void (*)(double &time,
 											 double &dtime,
 											 double &rtol_loc,
 											 double &atol_loc,
-											 double &switch_implicit);
-using ZDPlasKin_bolsig_rates = void (*)(bool &lbolsig_force);
+											 double *switch_implicit);
+using ZDPlasKin_bolsig_rates = void (*)(bool *lbolsig_force);
 using ZDPlasKin_get_species_index = void (*)(const char *str, int &i, size_t str_len);
-using ZDPlasKin_set_density = void (*)(const char *string, double &DENS, bool &LDENS_CONST, size_t string_len);
-using ZDPlasKin_get_density = void (*)(const char *string, double &DENS, bool &LDENS_CONST, size_t string_len);
-using ZDPlasKin_get_density_total = void (*)(double &ALL_SPECIES,
-											 double &ALL_NEUTRAL,
-											 double &ALL_ION_POSITIVE,
-											 double &ALL_ION_NEGATIVE,
-											 double &ALL_CHARGE);
+using ZDPlasKin_set_density = void (*)(const char *string, double *DENS, bool *LDENS_CONST, size_t string_len);
+using ZDPlasKin_get_density = void (*)(const char *string, double *DENS, bool *LDENS_CONST, size_t string_len);
+using ZDPlasKin_get_density_total = void (*)(double *ALL_SPECIES,
+											 double *ALL_NEUTRAL,
+											 double *ALL_ION_POSITIVE,
+											 double *ALL_ION_NEGATIVE,
+											 double *ALL_CHARGE);
 using ZDPlasKin_get_rates = void (*)(double SOURCE_TERMS[],
 									 double REACTION_RATES[],
 									 double **SOURCE_TERMS_MATRIX,
@@ -39,22 +39,22 @@ using ZDPlasKin_get_rates = void (*)(double SOURCE_TERMS[],
 									 double MEAN_REACTION_RATES[],
 									 double **MEAN_SOURCE_TERMS_MATRIX);
 
-using ZDPlasKin_set_config = void (*)(double &ATOL,
-									  double &RTOL,
-									  bool &SILENCE_MODE,
-									  bool &STAT_ACCUM,
-									  bool &QTPLASKIN_SAVE,
-									  double &BOLSIG_EE_FRAC,
-									  bool &BOLSIG_IGNORE_GAS_TEMPERATURE);
+using ZDPlasKin_set_config = void (*)(double *ATOL,
+									  double *RTOL,
+									  bool *SILENCE_MODE,
+									  bool *STAT_ACCUM,
+									  bool *QTPLASKIN_SAVE,
+									  double *BOLSIG_EE_FRAC,
+									  bool *BOLSIG_IGNORE_GAS_TEMPERATURE);
 
-using ZDPlasKin_set_conditions = void (*)(double &GAS_TEMPERATURE,
-										  double &REDUCED_FREQUENCY,
-										  double &REDUCED_FIELD,
-										  double &ELEC_TEMPERATURE,
-										  bool &GAS_HEATING,
-										  double &SPEC_HEAT_RATIO,
-										  double &HEAT_SOURCE,
-										  bool &SOFT_RESET);
+using ZDPlasKin_set_conditions = void (*)(double *GAS_TEMPERATURE,
+										  double *REDUCED_FREQUENCY,
+										  double *REDUCED_FIELD,
+										  double *ELEC_TEMPERATURE,
+										  bool *GAS_HEATING,
+										  double *SPEC_HEAT_RATIO,
+										  double *HEAT_SOURCE,
+										  bool *SOFT_RESET);
 using ZDPlasKin_get_conditions = void (*)(double &GAS_TEMPERATURE,
 										  double &REDUCED_FREQUENCY,
 										  double &REDUCED_FIELD,
@@ -74,11 +74,11 @@ using ZDPlasKin_stop = void (*)(const char *string, size_t string_len);
 using ZDPlasKin_write_file = void (*)(const char *FILE_SPECIES,
 									  const char *FILE_REACTIONS,
 									  const char *FILE_SOURCE_MATRIX,
-									  int &FILE_UNIT,
-									  size_t FILE_SPECIFIES_len,
-									  size_t FILE_REACTIONS_len,
-									  size_t FILE_SOURCE_MATRIX_len);
-using ZDPlasKin_write_qtplaskin = void (*)(double &time, bool &LFORCE_WRITE);
+									  int *FILE_UNIT,
+									  size_t *FILE_SPECIFIES_len,
+									  size_t *FILE_REACTIONS_len,
+									  size_t *FILE_SOURCE_MATRIX_len);
+using ZDPlasKin_write_qtplaskin = void (*)(double &time, bool *LFORCE_WRITE);
 using ZDPlasKin_reac_source_matrix = void (*)(double reac_rate_local[], double **reac_source_local);
 using ZDPlasKin_fex = void (*)(int &neq, double &t, double y[], double ydot[]);
 using ZDPlasKin_jex = void (*)(int &neq, double &t, double y[], int &ml, int &mu, double **pd, int &nrpd);
