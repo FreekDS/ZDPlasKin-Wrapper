@@ -13,6 +13,16 @@ contains
         write(*, *) testjeee
     end subroutine print
 
+    subroutine optional(a, b, res)
+        integer, intent(in) :: a
+        integer, optional, intent(in) :: b
+        integer, intent(out) :: res
+        if (present(b)) then
+            res = a + b
+        else
+            res = a
+        endif
+    end subroutine optional
 
     function writeTest()
         write(*, *)  "Hello World!"
