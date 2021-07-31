@@ -5,7 +5,7 @@
 #include "helpers/string_helpers.h"
 #include "ZDPlasKinWrapper.h"
 #include "ZDPlasKinParams.h"
-#include "ZDPlasKinCompiler.h"
+#include "examples/example1.h"
 
 #ifdef WINDOWS
 #include <windows/WindowsLoader.h>
@@ -20,10 +20,17 @@ using PlatformLoader = UnixLoader;
 
 #endif
 
-/**
- * 3. python module maken die bovenstaande gebruikt (cpp - python)
- * 4. Cross platformizeren
- */
+// TODO: fix multidimensional fortran arrays
+// TODO: handle console in/output on errors with preprocessor/ZDPlaskin/...
+// TODO: create python module
+// TODO: 'cross-platformize' everything
+	// - UnixLoader
+	// - Check if compilation works on UNIX systems
+	// - Unix preprocessing
+// TODO: documentation
+// TODO: build/install script
+	// - gfortran compiler is a requirement
+// TODO: recreate ZDPlasKin examples in cpp/python
 
 int main() {
 	std::string inFile = "kinet.inp";
@@ -40,8 +47,7 @@ int main() {
 		loader.init();
 		parameters.readParams();
 
-		// Test method to see if linked correctly
-		zdplaskin.init("bolsigdb.dat", true);
+		example1(zdplaskin);
 	}
 	catch (const ZDPlaskinException &e) {
 		std::cerr << "Exception occurred" << std::endl;

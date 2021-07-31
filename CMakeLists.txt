@@ -14,7 +14,10 @@ set(SRC
         src/WindowsLoader.cpp
         src/UnixLoader.cpp
         src/ZDPlasKinWrapper.cpp
-        src/ZDPlasKinParams.cpp src/helpers/string_helpers.cpp src/ZDPlasKinCompiler.cpp include/ZDPlasKinCompiler.h)
+        src/ZDPlasKinParams.cpp
+        src/helpers/string_helpers.cpp
+        src/ZDPlasKinCompiler.cpp
+        examples/example1.cpp)
 
 add_executable(LZDPlaskin ${SRC})
 
