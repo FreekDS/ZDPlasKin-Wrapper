@@ -1,5 +1,5 @@
 #include "helpers/string_helpers.h"
-#include <algorithm>
+#include "ZDPlasKinExceptions.h"
 
 #include <iostream>
 
@@ -29,6 +29,21 @@ void removeSubstr(std::string &source, const std::string &to_remove, unsigned in
 
 void removeWhitespaces(std::string &source) {
 	source.erase(std::remove_if(source.begin(), source.end(), ::isspace), source.end());
+}
+
+std::vector<std::string> splitEqualSize(const std::string &string, const unsigned int partSize) {
+	if (string.length()%partSize != 0) {
+		throw UtilsException("String '" + string + "' has no size divisible by " + std::to_string(partSize)
+								 + ": cannot split it in equal parts");
+	}
+	const unsigned int count = string.length() / partSize;
+	std::vector<std::string> result(count);
+	unsigned int s_i = 0;
+	for(int i = 0; i<count; i++) {
+		result[i] = string.substr(s_i, partSize);
+		s_i += partSize;
+	}
+	return result;
 }
 
 } // namespace utils
