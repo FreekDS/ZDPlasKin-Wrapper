@@ -7,6 +7,10 @@ module testing
     doubleprecision, parameter :: haha = 1.2
     character(*), parameter :: TEST = "yese"
 
+    character(10) :: hahastring = "haha"
+
+    character(4) :: listje(4) = ["haha", "jepe", "yese", "hihi"]
+
 contains
     subroutine print(string)
         character(*) :: string
