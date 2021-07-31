@@ -11,7 +11,7 @@ class ZDPlasKinWrapper {
 	ILibraryLoader *_lib;
 	ZDPlasKinParams *_params;
 
-	static std::string lib_f(const std::string &name);
+	static std::string lib_f(const std::string &name, bool is_variable = false);
 
  public:
 

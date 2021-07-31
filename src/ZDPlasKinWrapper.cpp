@@ -3,10 +3,14 @@
 #include "helpers/string_helpers.h"
 #include "ZDPlasKinWrapper.h"
 #include <filesystem>
+#include <cstring>
 #include "platform.h"
 
-std::string ZDPlasKinWrapper::lib_f(const std::string &name) {
-	return "__zdplaskin_MOD_zdplaskin_" + name;
+std::string ZDPlasKinWrapper::lib_f(const std::string &name, bool is_variable) {
+	if (is_variable)
+		return "__zdplaskin_MOD_" + name;
+	else
+		return "__zdplaskin_MOD_zdplaskin_" + name;
 }
 
 void ZDPlasKinWrapper::init(const std::string &bolsigDB, bool updateDB) {
@@ -269,37 +273,31 @@ void ZDPlasKinWrapper::reac_rates(double time) {
 ZDPlasKinWrapper::ZDPlasKinWrapper(ILibraryLoader *lib, ZDPlasKinParams *params) : _lib(lib), _params(params) {}
 
 std::vector<double> ZDPlasKinWrapper::getDensity() const {
-	auto dens = _lib->getFunction<double *>(lib_f("density"));
+	auto dens = _lib->getFunction<double *>(lib_f("density", true));
 	return utils::ptrArrayToVec(dens, _params->getSpeciesMax());
 }
 
 std::vector<int> ZDPlasKinWrapper::getSpeciesCharge() const {
-	auto speciesCharge = _lib->getFunction<int *>(lib_f("species_max"));
+	auto speciesCharge = _lib->getFunction<int *>(lib_f("species_max", true));
 	return std::move(utils::ptrArrayToVec(speciesCharge, _params->getSpeciesMax()));
 }
 
 std::vector<std::string> ZDPlasKinWrapper::getSpeciesName() const {
-	auto speciesNames = _lib->getFunction<char **>(lib_f("species_name"));
-	auto speciesNamesVec = utils::ptrArrayToVec(speciesNames, _params->getSpeciesMax());
-	std::vector<std::string> result(_params->getSpeciesMax());
-	for (int i = 0; i < _params->getSpeciesMax(); i++) {
-		result[i] = std::string(speciesNamesVec[i]);
-	}
-	return std::move(result);
+	auto speciesNames = _lib->getFunction<char *>(lib_f("species_name", true));
+	std::vector<std::string> species = utils::splitEqualSize(std::string(speciesNames), _params->getSpeciesLength());
+	return std::move(species);
 }
 
 std::vector<std::string> ZDPlasKinWrapper::getReactionSign() const {
-	auto reactionSign = _lib->getFunction<char **>(lib_f("reactions_max"));
-	auto reactionSignVec = utils::ptrArrayToVec(reactionSign, _params->getReactionsMax());
-	std::vector<std::string> result(_params->getReactionsMax());
-	for (int i = 0; i < _params->getReactionsMax(); i++) {
-		result[i] = std::string(reactionSignVec[i]);
-	}
-	return std::move(result);
+	auto reactionSign = _lib->getFunction<char *>(lib_f("reactions_sign", true));
+	std::vector<std::string> reactions = utils::splitEqualSize(
+		std::string(reactionSign), _params->getReactionsLength()
+	);
+	return std::move(reactions);
 }
 
 std::vector<bool> ZDPlasKinWrapper::getLReactionBlock() const {
-	auto LReactionBlock = _lib->getFunction<bool *>(lib_f("lreaction_block"));
+	auto LReactionBlock = _lib->getFunction<bool *>(lib_f("lreaction_block", true));
 	return std::move(utils::ptrArrayToVec(LReactionBlock, _params->getReactionsMax()));
 }
 
