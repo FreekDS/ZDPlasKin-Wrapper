@@ -134,7 +134,7 @@ class ZDPlasKinWrapper {
 		double ELEC_POWER_INELASTIC_N;
 		utils::matrix<double> ELEC_EEDF;
 	};
-	GetConditionsResult get_conditions();
+	ZDPlasKinWrapper::GetConditionsResult get_conditions(size_t ELEC_EEDF_SIZE);
 
 	double get_condition_gas_temperature();
 	double get_condition_reduced_frequency();
@@ -149,7 +149,7 @@ class ZDPlasKinWrapper {
 	double get_condition_elec_power_n();
 	double get_condition_elec_power_elastic_n();
 	double get_condition_elec_power_inelastic_n();
-	utils::matrix<double> get_condition_elec_eedf();
+	utils::matrix<double> get_condition_elec_eedf(size_t ELEC_EEDF_SIZE);
 
 	void reset();
 

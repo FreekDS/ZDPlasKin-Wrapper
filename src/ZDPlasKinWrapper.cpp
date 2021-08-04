@@ -96,35 +96,47 @@ ZDPlasKinWrapper::TotalDensityResult ZDPlasKinWrapper::get_density_total() {
 ZDPlasKinWrapper::RatesResult ZDPlasKinWrapper::get_rates() {
 	auto getRatesFunc = _lib->getFunction<ZDPlasKin_get_rates>(lib_f("get_rates"));
 
-	// TODO check in matrix if not i and j should be swapped
-
 	std::vector<double> SOURCE_TERMS(_params->getSpeciesMax(), 0);
 	std::vector<double> REACTION_RATES(_params->getReactionsMax(), 0);
-	auto SOURCE_TERMS_MATRIX = utils::matrixFromSizes<double>(_params->getSpeciesMax(), _params->getReactionsMax());
 	std::vector<double> MEAN_DENSITY(_params->getSpeciesMax(), 0);
 	std::vector<double> MEAN_SOURCE_TERMS(_params->getSpeciesMax(), 0);
 	std::vector<double> MEAN_REACTION_RATES(_params->getReactionsMax(), 0);
-	auto MEAN_SOURCE_TERMS_MATRIX =
-		utils::matrixFromSizes<double>(_params->getSpeciesMax(), _params->getReactionsMax());
+
+	auto *SOURCE_TERMS_MATRIX = new double[_params->getSpeciesMax()*_params->getReactionsMax()];
+	auto *MEAN_SOURCE_TERMS_MATRIX = new double[_params->getSpeciesMax()*_params->getReactionsMax()];
 
 	getRatesFunc(
 		SOURCE_TERMS.data(),
 		REACTION_RATES.data(),
-		utils::toPtrVec(SOURCE_TERMS_MATRIX).data(),
+		SOURCE_TERMS_MATRIX,
 		MEAN_DENSITY.data(),
 		MEAN_SOURCE_TERMS.data(),
 		MEAN_REACTION_RATES.data(),
-		utils::toPtrVec(MEAN_SOURCE_TERMS_MATRIX).data()
+		MEAN_SOURCE_TERMS_MATRIX
 	);
+
+	utils::matrix<double> mean_src_terms_matrix = utils::arrayToMatrix(
+		MEAN_SOURCE_TERMS_MATRIX,
+		_params->getSpeciesMax(),
+		_params->getReactionsMax()
+	);
+	utils::matrix<double> src_terms_matrix = utils::arrayToMatrix(
+		SOURCE_TERMS_MATRIX,
+		_params->getSpeciesMax(),
+		_params->getReactionsMax()
+	);
+
+	delete[] SOURCE_TERMS_MATRIX;    // Free memory!
+	delete[] MEAN_SOURCE_TERMS_MATRIX;    // Free memory!
 
 	return {
 		SOURCE_TERMS,
 		REACTION_RATES,
-		SOURCE_TERMS_MATRIX,
+		src_terms_matrix,
 		MEAN_DENSITY,
 		MEAN_SOURCE_TERMS,
 		MEAN_REACTION_RATES,
-		MEAN_SOURCE_TERMS_MATRIX
+		mean_src_terms_matrix
 	};
 }
 
@@ -164,7 +176,7 @@ void ZDPlasKinWrapper::set_conditions(double GAS_TEMPERATURE,
 					  &SOFT_RESET);
 }
 
-ZDPlasKinWrapper::GetConditionsResult ZDPlasKinWrapper::get_conditions() {
+ZDPlasKinWrapper::GetConditionsResult ZDPlasKinWrapper::get_conditions(size_t ELEC_EEDF_SIZE) {
 	auto getConditionsFunc = _lib->getFunction<ZDPlasKin_get_conditions>(lib_f("get_conditions"));
 	double GAS_TEMPERATURE = 0;
 	double REDUCED_FREQUENCY = 0;
@@ -179,7 +191,10 @@ ZDPlasKinWrapper::GetConditionsResult ZDPlasKinWrapper::get_conditions() {
 	double ELEC_POWER_N = 0;
 	double ELEC_POWER_ELASTIC_N = 0;
 	double ELEC_POWER_INELASTIC_N = 0;
-	utils::matrix<double> ELEC_EEDF;
+
+	// ELEC_EEDF_MATRIX always has 2 rows (see zdplaskin_m impl)
+	auto *ELEC_EEDF = new double[2*ELEC_EEDF_SIZE];
+
 	getConditionsFunc(&GAS_TEMPERATURE,
 					  &REDUCED_FREQUENCY,
 					  &REDUCED_FIELD,
@@ -193,7 +208,11 @@ ZDPlasKinWrapper::GetConditionsResult ZDPlasKinWrapper::get_conditions() {
 					  &ELEC_POWER_N,
 					  &ELEC_POWER_ELASTIC_N,
 					  &ELEC_POWER_INELASTIC_N,
-					  utils::toPtrVec(ELEC_EEDF).data());
+					  ELEC_EEDF);
+
+	utils::matrix<double> elec_eedf = utils::arrayToMatrix(ELEC_EEDF, 2, ELEC_EEDF_SIZE);
+	delete[] ELEC_EEDF;
+
 	return {
 		GAS_TEMPERATURE,
 		REDUCED_FREQUENCY,
@@ -208,7 +227,7 @@ ZDPlasKinWrapper::GetConditionsResult ZDPlasKinWrapper::get_conditions() {
 		ELEC_POWER_N,
 		ELEC_POWER_ELASTIC_N,
 		ELEC_POWER_INELASTIC_N,
-		ELEC_EEDF
+		elec_eedf
 	};
 }
 
@@ -246,8 +265,16 @@ void ZDPlasKinWrapper::write_qtplaskin(double time, bool LFORCE_WRITE) {
 
 utils::matrix<double> ZDPlasKinWrapper::reac_source_matrix(double *reac_rate_local) {
 	auto reacSourceMatrixFunc = _lib->getFunction<ZDPlasKin_reac_source_matrix>(lib_f("reac_source_matrix"));
-	auto reac_source_local = utils::matrixFromSizes<double>(_params->getSpeciesMax(), _params->getReactionsMax());
-	reacSourceMatrixFunc(reac_rate_local, utils::toPtrVec(reac_source_local).data());
+	auto *REAC_SOURCE_LOCAL = new double[_params->getSpeciesMax()*_params->getReactionsMax()];
+	reacSourceMatrixFunc(reac_rate_local, REAC_SOURCE_LOCAL);
+
+	utils::matrix<double> reac_source_local = utils::arrayToMatrix(
+		REAC_SOURCE_LOCAL,
+		_params->getSpeciesMax(),
+		_params->getReactionsMax()
+	);
+	delete[] REAC_SOURCE_LOCAL;    // Free memory!
+
 	return reac_source_local;
 }
 
@@ -260,8 +287,12 @@ std::vector<double> ZDPlasKinWrapper::fex(int neq, double t, double *y) {
 
 utils::matrix<double> ZDPlasKinWrapper::jex(int neq, double t, double *y, int ml, int mu, int nrpd) {
 	auto jexFunc = _lib->getFunction<ZDPlasKin_jex>(lib_f("jex"));
-	auto pd = utils::matrixFromSizes<double>(nrpd, neq);
-	jexFunc(neq, t, y, ml, mu, utils::toPtrVec(pd).data(), nrpd);
+	auto *PD = new double[nrpd*neq];
+	jexFunc(neq, t, y, ml, mu, PD, nrpd);
+
+	utils::matrix<double> pd = utils::arrayToMatrix(PD, nrpd, neq);
+	delete[] PD; // Free memory!
+
 	return pd;
 }
 
@@ -388,9 +419,19 @@ std::vector<double> ZDPlasKinWrapper::get_rates_reaction_rates() {
 
 utils::matrix<double> ZDPlasKinWrapper::get_rates_source_terms_matrix() {
 	auto getRatesFunc = _lib->getFunction<ZDPlasKin_get_rates>(lib_f("get_rates"));
-	auto source_terms_matrix = utils::matrixFromSizes<double>(_params->getSpeciesMax(), _params->getReactionsMax());
-	getRatesFunc(nullptr, nullptr, utils::toPtrVec(source_terms_matrix).data(), nullptr, nullptr, nullptr, nullptr);
-	return source_terms_matrix;
+	auto *source_terms_matrix = new double[_params->getSpeciesMax()*_params->getReactionsMax()];
+
+	getRatesFunc(nullptr, nullptr, source_terms_matrix, nullptr, nullptr, nullptr, nullptr);
+
+	auto src_terms_matrix = utils::arrayToMatrix(
+		source_terms_matrix,
+		_params->getSpeciesMax(),
+		_params->getReactionsMax()
+	);
+
+	delete[] source_terms_matrix; // Free memory!
+
+	return src_terms_matrix;
 }
 
 std::vector<double> ZDPlasKinWrapper::get_rates_mean_density() {
@@ -416,18 +457,23 @@ std::vector<double> ZDPlasKinWrapper::get_rates_mean_reaction_rates() {
 
 utils::matrix<double> ZDPlasKinWrapper::get_rates_mean_source_terms_matrix() {
 	auto getRatesFunc = _lib->getFunction<ZDPlasKin_get_rates>(lib_f("get_rates"));
-	auto mean_source_terms_matrix = utils::matrixFromSizes<double>(
-		_params->getSpeciesMax(),
-		_params->getReactionsMax()
-	);
+	auto *MEAN_SOURCE_TERMS_MATRIX = new double[_params->getSpeciesMax()*_params->getReactionsMax()];
+
 	getRatesFunc(nullptr,
 				 nullptr,
 				 nullptr,
 				 nullptr,
 				 nullptr,
 				 nullptr,
-				 utils::toPtrVec(mean_source_terms_matrix).data());
-	return mean_source_terms_matrix;
+				 MEAN_SOURCE_TERMS_MATRIX
+	);
+	utils::matrix<double> mean_src_terms_matrix = utils::arrayToMatrix(
+		MEAN_SOURCE_TERMS_MATRIX,
+		_params->getSpeciesMax(),
+		_params->getReactionsMax()
+	);
+	delete[] MEAN_SOURCE_TERMS_MATRIX; // free memory!
+	return mean_src_terms_matrix;
 }
 
 void ZDPlasKinWrapper::set_config_atol(double atol) {
@@ -765,10 +811,9 @@ double ZDPlasKinWrapper::get_condition_elec_power_inelastic_n() {
 	return elec_power_inelastic_n;
 }
 
-utils::matrix<double> ZDPlasKinWrapper::get_condition_elec_eedf() {
-	// todo: check if it is required to pass elec_eedf matrix as parameter rather than creating it in func
+utils::matrix<double> ZDPlasKinWrapper::get_condition_elec_eedf(size_t ELEC_EEDF_SIZE) {
 	auto getConditionFunc = _lib->getFunction<ZDPlasKin_get_conditions>(lib_f("get_conditions"));
-	auto elec_eedf = utils::matrixFromSizes<double>(_params->getSpeciesMax(), _params->getReactionsMax());
+	auto ELEC_EEDF = new double[2*ELEC_EEDF_SIZE];
 	getConditionFunc(nullptr,
 					 nullptr,
 					 nullptr,
@@ -782,7 +827,10 @@ utils::matrix<double> ZDPlasKinWrapper::get_condition_elec_eedf() {
 					 nullptr,
 					 nullptr,
 					 nullptr,
-					 utils::toPtrVec(elec_eedf).data());
+					 ELEC_EEDF);
+
+	utils::matrix<double> elec_eedf = utils::arrayToMatrix(ELEC_EEDF, 2, ELEC_EEDF_SIZE);
+	delete[] ELEC_EEDF;    // Free memory!
 	return elec_eedf;
 }
 void ZDPlasKinWrapper::write_qtplaskin(double time) {
