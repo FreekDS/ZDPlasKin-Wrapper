@@ -20,16 +20,15 @@ using PlatformLoader = UnixLoader;
 
 #endif
 
-// TODO: fix multidimensional fortran arrays
 // TODO: handle console in/output on errors with preprocessor/ZDPlaskin/...
 // TODO: create python module
 // TODO: 'cross-platformize' everything
-	// - UnixLoader
-	// - Check if compilation works on UNIX systems
-	// - Unix preprocessing
+// - UnixLoader
+// - Check if compilation works on UNIX systems
+// - Unix preprocessing
 // TODO: documentation
 // TODO: build/install script
-	// - gfortran compiler is a requirement
+// - gfortran compiler is a requirement
 // TODO: recreate ZDPlasKin examples in cpp/python
 
 int main() {
