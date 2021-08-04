@@ -36,6 +36,20 @@ std::vector<T> ptrArrayToVec(T *ptrArray, size_t size) {
 	return res;
 }
 
+template<typename T>
+matrix<T> arrayToMatrix(T *ptrArray, size_t rows, size_t cols) {
+	// Difference in memory allocation fortran <-> cpp
+	// rows and cols are swapped to match the fortran array
+	auto mat = matrixFromSizes<T>(rows, cols);
+	for (int a = 0; a < rows; a++) {
+		for (int b = 0; b < cols; b++) {
+			size_t i = a == 0 ? (a*rows) + b : (a*rows) + b + 1;
+			mat[a][b] = ptrArray[i];
+		}
+	}
+	return mat;
+}
+
 } // namespace utils
 
 
