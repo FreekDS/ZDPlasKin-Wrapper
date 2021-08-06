@@ -34,3 +34,5 @@
 cmake-build-debug/
 ZDPlasKin_2.0a_Windows/
 .idea/
+
+venv/
