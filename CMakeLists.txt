@@ -10,14 +10,14 @@ include_directories(include)
 file(COPY ./libs/ DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/libs/")
 
 set(SRC
-        main.cpp
-        src/WindowsLoader.cpp
-        src/UnixLoader.cpp
-        src/ZDPlasKinWrapper.cpp
-        src/ZDPlasKinParams.cpp
-        src/helpers/string_helpers.cpp
-        src/ZDPlasKinCompiler.cpp
-        examples/example1.cpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/WindowsLoader.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/UnixLoader.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ZDPlasKinWrapper.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ZDPlasKinParams.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/helpers/string_helpers.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ZDPlasKinCompiler.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/examples/example1.cpp)
 
-add_executable(LZDPlaskin ${SRC})
+add_executable(LZDPlaskin ${SRC} main.cpp)
 
+add_subdirectory(python)
