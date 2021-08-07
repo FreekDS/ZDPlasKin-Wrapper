@@ -4,7 +4,7 @@ if(PYTHON3_FOUND)
     message(STATUS "python found :)")
 endif()
 
-add_library(py_module_test SHARED ${SRC} main.cpp)
+add_library(py_module_test SHARED ${SRC} zdplaskin_bindings.cpp)
 target_include_directories(py_module_test PUBLIC ${Python3_INCLUDE_DIRS})
 
 set_target_properties(py_module_test
