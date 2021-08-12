@@ -6,15 +6,19 @@
 class ZDPlasKinParams {
  private:
 	std::string _filePath;
-	int _speciesMax;
-	int _speciesElectrons;
-	int _speciesLength;
-	int _reactionsMax;
-	int _reactionsLength;
+	int _speciesMax = 0;
+	int _speciesElectrons = 0;
+	int _speciesLength = 0;
+	int _reactionsMax = 0;
+	int _reactionsLength = 0;
 
  public:
 
+	ZDPlasKinParams() noexcept = default;
+
 	explicit ZDPlasKinParams(std::string file_path);
+
+	void setFilePath(std::string file_path);
 
 	void readParams();
 

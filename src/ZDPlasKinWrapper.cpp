@@ -301,7 +301,7 @@ void ZDPlasKinWrapper::reac_rates(double time) {
 	reacRatesFunc(time);
 }
 
-ZDPlasKinWrapper::ZDPlasKinWrapper(ILibraryLoader *lib, ZDPlasKinParams *params) : _lib(lib), _params(params) {}
+ZDPlasKinWrapper::ZDPlasKinWrapper(ILibraryLoader *lib, ZDPlasKinParams *params) noexcept: _lib(lib), _params(params) {}
 
 std::vector<double> ZDPlasKinWrapper::getDensity() const {
 	auto dens = _lib->getFunction<double *>(lib_f("density", true));

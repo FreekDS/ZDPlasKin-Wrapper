@@ -11,8 +11,16 @@ class WindowsLoader : public ILibraryLoader {
  public:
  private:
 	void *getFuncAddr(const std::string &name) override;
+ 	void free();
+
+ 	static std::string checkLibExt(const std::string &str);
+
  public:
 	explicit WindowsLoader(const std::string &library);
+
+	WindowsLoader() noexcept = default;
+
+	void init(const std::string &library) override;
 
 	void init() override;
 

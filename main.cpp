@@ -38,7 +38,7 @@ int main() {
 	std::string srcPath = std::filesystem::canonical(inFile).string();
 	utils::removeSubstr(srcPath, inFile);
 	std::string path = srcPath + "zdplaskin.dll";
-	PlatformLoader loader(path);
+	PlatformLoader loader("zdplaskin");
 	ZDPlasKinParams parameters(srcPath + "zdplaskin_m.F90");
 	ZDPlasKinWrapper zdplaskin{&loader, &parameters};
 
@@ -48,7 +48,7 @@ int main() {
 
 		example1(zdplaskin);
 	}
-	catch (const ZDPlaskinException &e) {
+	catch (const std::exception &e) {
 		std::cerr << "Exception occurred" << std::endl;
 		std::cerr << e.what() << std::endl;
 		return 1;

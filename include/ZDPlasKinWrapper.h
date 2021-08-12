@@ -15,7 +15,7 @@ class ZDPlasKinWrapper {
 
  public:
 
-	ZDPlasKinWrapper(ILibraryLoader *lib, ZDPlasKinParams *params);
+	ZDPlasKinWrapper(ILibraryLoader *lib, ZDPlasKinParams *params) noexcept;
 
 	void init(const std::string &bolsigDB = "", bool updateDB = false);
 

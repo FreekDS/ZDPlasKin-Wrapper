@@ -70,3 +70,7 @@ void ZDPlasKinParams::readParams() {
 		throw ParseException("Cannot open '" + _filePath + "'");
 	}
 }
+
+void ZDPlasKinParams::setFilePath(std::string file_path) {
+	_filePath = std::move(file_path);
+}

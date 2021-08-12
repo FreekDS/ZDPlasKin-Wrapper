@@ -16,7 +16,6 @@ for f in sys.argv:
 
 class CMakeExtension(Extension):
     def __init__(self, name, cmake_lists_dir='.', *args, **kwargs):
-        print("--------> nameke ", name, type(name))
         Extension.__init__(self, name, sources=[], inplace=False, *args, **kwargs)
         self.cmake_lists_dir = os.path.abspath(cmake_lists_dir)
         self._file_name = f"{name}.pyd"
@@ -75,9 +74,9 @@ class CMakeBuild(build_ext):
 
 
 setup(
-    name='test_module',
+    name='zdplaskin',
     version='a1.0',
-    ext_modules=[CMakeExtension("test_module")],
+    ext_modules=[CMakeExtension("zdplaskin")],
     cmdclass={'build_ext': CMakeBuild},
     zip_safe=False
 )

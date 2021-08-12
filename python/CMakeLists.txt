@@ -10,7 +10,7 @@ target_include_directories(py_module_test PUBLIC ${Python3_INCLUDE_DIRS})
 set_target_properties(py_module_test
         PROPERTIES
         PREFIX ""
-        OUTPUT_NAME "test_module"
+        OUTPUT_NAME "zdplaskin"
         LINKER_LANGUAGE CXX
         SUFFIX ".pyd")
 
