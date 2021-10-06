@@ -1,82 +1,62 @@
 import os
-import os.path
-import platform
-import subprocess
-import sys
+import pathlib
 
 from setuptools import setup, Extension
-from setuptools.command.build_ext import build_ext
-
-# Command line flags forwarded to CMake (for debug purpose)
-cmake_cmd_args = []
-for f in sys.argv:
-    if f.startswith('-D'):
-        cmake_cmd_args.append(f)
+from setuptools.command.build_ext import build_ext as build_ext_orig
 
 
 class CMakeExtension(Extension):
-    def __init__(self, name, cmake_lists_dir='.', *args, **kwargs):
-        Extension.__init__(self, name, sources=[], inplace=False, *args, **kwargs)
-        self.cmake_lists_dir = os.path.abspath(cmake_lists_dir)
-        self._file_name = f"{name}.pyd"
+
+    def __init__(self, name):
+        # don't invoke the original build_ext for this special extension
+        super().__init__(name, sources=[])
 
 
+class build_ext(build_ext_orig):
 
-class CMakeBuild(build_ext):
-    def check_cmake(self):
-        try:
-            out = subprocess.check_output(['cmake', '--version'])
-            return out.decode().split('\n', 1)[0]
-        except OSError:
-            raise RuntimeError("Cmake must be installed to build the following extensions: " +
-                               ", ".join(e.name for e in self.extensions))
-
-    def build_extension(self, ext):
-        print(self.check_cmake())
-
+    def run(self):
         for ext in self.extensions:
-            ext_dir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
-            cfg = 'Debug' if self.debug else 'Release'
-            cmake_args = [
-                f"-DCMAKE_BUILD_TYPE={cfg}",
-                f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={ext_dir}",
-                f"-DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_{cfg.upper()}={self.build_temp}",
-                f"-DPYTHON_EXECUTABLE={sys.executable}"
-            ]
+            self.build_cmake(ext)
+        super().run()
 
-            if platform.system() == 'Windows':
-                plat = ('x64' if platform.architecture()[0] == '64bit' else 'Win32')
-                # Likely options for windows
-                cmake_args += [
-                    f'-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE',
-                    f'-DCMAKE_RUNTIME_OUTPUT_DIRECTORY_{cfg.upper()}={ext_dir}'
-                ]
-                cmake_args += [
-                    '-G', 'MinGW Makefiles'
-                ]
-            cmake_args += cmake_cmd_args
+    def build_cmake(self, ext):
+        cwd = pathlib.Path().absolute()
+        print("CWD :) ", cwd)
+        # these dirs will be created in build_py, so if you don't have
+        # any python sources to bundle, the dirs will be missing
+        build_temp = pathlib.Path(self.build_temp)
+        build_temp.mkdir(parents=True, exist_ok=True)
+        extdir = pathlib.Path(self.get_ext_fullpath(ext.name))
+        extdir.mkdir(parents=True, exist_ok=True)
 
-            if not os.path.exists(self.build_temp):
-                os.makedirs(self.build_temp)
+        # example of cmake args
+        config = 'Debug' if self.debug else 'Release'
+        cmake_args = [
+            '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + str(extdir.parent.absolute()),
+            '-DCMAKE_BUILD_TYPE=' + config,
+            '-G MinGW Makefiles'
+        ]
 
-            cmake_cmd = ['cmake', ext.cmake_lists_dir] + cmake_args
-            print(cmake_cmd)
+        # example of build args
+        build_args = [
+            '--config', config,
+        ]
 
-            out = subprocess.call(cmake_cmd, cwd=self.build_temp)
-            out = subprocess.call(['cmake', '--build', '.', '--config', cfg], cwd=self.build_temp)
-
-            print(out)
-
-    def get_ext_filename(self, fullname):
-        return f"{fullname}.pyd"
-
-
+        os.chdir(str(build_temp))
+        self.spawn(['cmake', str(cwd)] + cmake_args)
+        if not self.dry_run:
+            self.spawn(['cmake', '--build', '.'] + build_args)
+        # Troubleshooting: if fail on line above then delete all possible
+        # temporary CMake files including "CMakeCache.txt" in top level dir.
+        os.chdir(str(cwd))
 
 
 setup(
     name='zdplaskin',
-    version='a1.0',
-    ext_modules=[CMakeExtension("zdplaskin")],
-    cmdclass={'build_ext': CMakeBuild},
-    zip_safe=False
+    version='0.1',
+    packages=['src'],
+    ext_modules=[CMakeExtension('zdplaskin')],
+    cmdclass={
+        'build_ext': build_ext,
+    }
 )
