@@ -1,6 +1,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <ZDPlasKinWrapper.h>
+#include <ZDPlasKinCompiler.h>
 #include <platform.h>
 #include <iostream>
 
@@ -52,7 +53,14 @@ PyObject *zdp_init(PyObject *self, PyObject *args, PyObject *kwargs) {
 
 	std::wstring ws(Py_GetProgramFullPath());
 	std::string tes = std::string(ws.begin(), ws.end());
-	std::cout << PyUnicode_AsUTF8(self_path) << std::endl << tes << "ha" << std::endl;
+	//std::cout << PyUnicode_AsUTF8(self_path) << std::endl << tes << "ha" << std::endl;
+
+	std::string inFile = "C:/Users/gebruiker/CLionProjects/ZDPlaskin/cmake-build-debug/kinet.inp)";
+
+	std::cout << inFile << std::endl;
+
+	ZDPlasKinCompiler::preprocess(inFile);
+	ZDPlasKinCompiler::compile();
 
 	std::string bolsig_filepath;
 	bool updateDB = false;

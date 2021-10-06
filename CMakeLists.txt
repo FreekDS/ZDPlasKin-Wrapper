@@ -3,7 +3,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(ZDPlaskin)
 
-add_subdirectory(fortran)
+#add_subdirectory(fortran)
 
 include_directories(include)
 

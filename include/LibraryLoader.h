@@ -19,7 +19,7 @@ class ILibraryLoader {
 
  public:
 	explicit ILibraryLoader(const std::string &library)
-		: _libPath(library.c_str()), _initialized(false), _libPath2(library) {}
+		: _libPath(library), _initialized(false) {}
 
 	ILibraryLoader() noexcept = default;
 
