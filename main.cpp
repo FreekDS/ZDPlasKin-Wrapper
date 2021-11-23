@@ -1,6 +1,11 @@
 #include <iostream>
 #include <filesystem>
 
+// TODO https://github.com/smrfeld/cmake_cpp_pybind11_tutorial (find pybind11)
+// TODO https://github.com/pybind/cmake_example/blob/master/CMakeLists.txt
+// TODO https://www.benjack.io/2018/02/02/python-cpp-revisited.html
+// TODO https://stackoverflow.com/questions/1612733/including-non-python-files-with-setup-py
+
 #include "platform.h"
 #include "helpers/string_helpers.h"
 #include "ZDPlasKinWrapper.h"
