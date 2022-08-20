@@ -8,7 +8,7 @@ class ZDPlaskinException : public std::exception {
 	std::string _what;
  public:
 	explicit ZDPlaskinException(std::string what) : _what(std::move(what)) {}
-	[[nodiscard]] const char *what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_USE_NOEXCEPT override {
+	[[nodiscard]] const char *what() const override {
 		return _what.c_str();
 	}
 };
