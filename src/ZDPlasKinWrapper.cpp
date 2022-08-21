@@ -838,3 +838,11 @@ void ZDPlasKinWrapper::write_qtplaskin(double time) {
 	writeQTPlaskinFunc(time, nullptr);
 }
 
+void ZDPlasKinWrapper::setLibrary(ILibraryLoader *lib) {
+    _lib = lib;
+}
+
+void ZDPlasKinWrapper::setParams(ZDPlasKinParams *params) {
+    _params = params;
+}
+

@@ -8,8 +8,8 @@
 
 class ZDPlasKinWrapper {
 
-	ILibraryLoader *_lib;
-	ZDPlasKinParams *_params;
+	ILibraryLoader *_lib = nullptr;
+	ZDPlasKinParams *_params = nullptr;
 
 	static std::string lib_f(const std::string &name, bool is_variable = false);
 
@@ -17,7 +17,13 @@ class ZDPlasKinWrapper {
 
 	ZDPlasKinWrapper(ILibraryLoader *lib, ZDPlasKinParams *params);
 
-	void init(const std::string &bolsigDB = "", bool updateDB = false);
+    ZDPlasKinWrapper() = default;
+
+    void setLibrary(ILibraryLoader *lib);
+
+    void setParams(ZDPlasKinParams *params);
+
+    void init(const std::string &bolsigDB = "", bool updateDB = false);
 
 	// takes and returns dtime
 	double &timestep(double time, double &dtime);
