@@ -5,32 +5,36 @@
 #include "ZDPlasKinExceptions.h"
 
 class ILibraryLoader {
- protected:
-	const char *_libPath;
-	bool _initialized;
-	virtual void *getFuncAddr(const std::string &name) = 0;
+protected:
+    const char *_libPath = "";
+    bool _initialized = false;
 
-	void requireInitialization() const {
-		if (!_initialized) {
-			throw LibraryException("Library loader is not initialized, call 'init()' first");
-		}
-	}
+    virtual void *getFuncAddr(const std::string &name) = 0;
 
- public:
-	explicit ILibraryLoader(const std::string &library)
-		: _libPath(library.c_str()), _initialized(false) {}
+    void requireInitialization() const {
+        if (!_initialized) {
+            throw LibraryException("Library loader is not initialized, call 'init()' first");
+        }
+    }
 
-	template<typename T>
-	T getFunction(const std::string &name) {
-		requireInitialization();
-		T functionAddress = (T)getFuncAddr(name);
-		if (functionAddress)
-			return functionAddress;
-		throw LibraryException("Cannot find symbol '" + name + "' in library");
-	}
+public:
+    explicit ILibraryLoader(const std::string &library)
+            : _libPath(library.c_str()), _initialized(false) {}
 
-	virtual void init() = 0;
-	virtual ~ILibraryLoader() = default;
+    ILibraryLoader() = default;
+
+    template<typename T>
+    T getFunction(const std::string &name) {
+        requireInitialization();
+        T functionAddress = (T) getFuncAddr(name);
+        if (functionAddress)
+            return functionAddress;
+        throw LibraryException("Cannot find symbol '" + name + "' in library");
+    }
+
+    virtual void init() = 0;
+
+    virtual ~ILibraryLoader() = default;
 };
 
 #endif //ZDPLASKIN_LIBRARYLOADER_H
