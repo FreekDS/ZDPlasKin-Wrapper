@@ -1,6 +1,8 @@
 #ifndef ZDPLASKIN_PLATFORM_H
 #define ZDPLASKIN_PLATFORM_H
 
+// TODO: Belangrijk!! 64bit 32bit detection and link with appropriate libraries
+
 #if defined(WIN32) || defined(WIN64)
 
 #define WINDOWS

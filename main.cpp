@@ -9,6 +9,7 @@
 #include "platform.h"
 #include "helpers/string_helpers.h"
 #include "ZDPlasKinWrapper.h"
+#include "ZDPlasKinCompiler.h"
 #include "ZDPlasKinParams.h"
 #include "examples/example1.h"
 
@@ -38,8 +39,8 @@ using PlatformLoader = UnixLoader;
 
 int main() {
 	std::string inFile = "kinet.inp";
-//	ZDPlasKinCompiler::preprocess(inFile);
-//	ZDPlasKinCompiler::compile();
+	ZDPlasKinCompiler::preprocess(inFile);
+	ZDPlasKinCompiler::compile();
 	std::string srcPath = std::filesystem::canonical(inFile).string();
 	utils::removeSubstr(srcPath, inFile);
 	std::string path = srcPath + "zdplaskin.dll";

@@ -33,15 +33,16 @@ void preprocess(const std::string &kinetFile) {
     ZDPlasKinCompiler::preprocess(kinetFile);
     ZDPlasKinCompiler::compile();
 
-    std::string srcPath = std::filesystem::canonical(kinetFile).string();
+    std::string srcPath = std::filesystem::canonical(kinetFile).parent_path().string();
 
     std::cout << "Source Path: " <<srcPath << '\n';
 
-    utils::removeSubstr(srcPath, kinetFile);
-    std::string path = srcPath + "zdplaskin.dll";
+//    utils::removeSubstr(srcPath, kinetFile);
+//    std::cout << "Source Path 2: " << srcPath << '\n';
+    std::string path = srcPath + "\\zdplaskin.dll";
 
     libraryLoader = PlatformLoader{path};
-    params = ZDPlasKinParams{srcPath + "zdplaskin_m.F90"};
+    params = ZDPlasKinParams{srcPath + "\\zdplaskin_m.F90"};
 
     zdp.setLibrary(&libraryLoader);
     zdp.setParams(&params);
