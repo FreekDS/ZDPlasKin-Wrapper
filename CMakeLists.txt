@@ -20,7 +20,7 @@ set(SRC
         ${SRC_DIR}/src/ZDPlasKinCompiler.cpp
         ${SRC_DIR}/examples/example1.cpp)
 
-#add_executable(LZDPlaskin ${SRC} ${SRC_DIR}/main.cpp)
+add_executable(LZDPlaskin ${SRC} ${SRC_DIR}/main.cpp)
 
 
 add_subdirectory(python)

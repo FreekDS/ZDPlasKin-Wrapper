@@ -6,9 +6,11 @@
 #define WINDOWS
 #define SEP "\\"
 
-#define LIB_PATH ".\\libs\\win\\"
-#define PREP_PATH LIB_PATH "preprocessor.exe"
+#define LIB_PATH "\\libs\\win\\"
+#define PREP_NAME "preprocessor.exe"
 #define BOLSIG_EXT "_x86_64_g.dll"
+
+#define MAX_PATH 260
 
 #elif defined(UNIX) || defined(POSIX)
 

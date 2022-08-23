@@ -29,10 +29,14 @@ namespace py = pybind11;
 
 
 void preprocess(const std::string &kinetFile) {
+    std::cout << std::filesystem::current_path() << '\n';
     ZDPlasKinCompiler::preprocess(kinetFile);
     ZDPlasKinCompiler::compile();
 
     std::string srcPath = std::filesystem::canonical(kinetFile).string();
+
+    std::cout << "Source Path: " <<srcPath << '\n';
+
     utils::removeSubstr(srcPath, kinetFile);
     std::string path = srcPath + "zdplaskin.dll";
 
@@ -42,8 +46,8 @@ void preprocess(const std::string &kinetFile) {
     zdp.setLibrary(&libraryLoader);
     zdp.setParams(&params);
 
-    loader.init();
-    parameters.readParams()
+    libraryLoader.init();
+    params.readParams();
 }
 
 

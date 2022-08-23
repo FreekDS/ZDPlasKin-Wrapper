@@ -20,7 +20,7 @@ setup(
     license="MIT",
     packages=find_packages(where="./python"),
     package_dir={"": "./python"},
-    cmake_install_dir="Lib/site-packages",
+    # cmake_install_dir="Lib/site-packages",
     include_package_data=True,
     python_requires=">=3.6",
 )
