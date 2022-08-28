@@ -78,7 +78,7 @@ PYBIND11_MODULE(ZDPlaskin, m) {
         zdp.init(bolsigFile, updateDB);
     });
 
-    // TODO check by reference/by value
+    // TODO check by reference/by value + change result to input
     m.def("timestep", [&](double time) {
         double result;
         zdp.timestep(time, result);
@@ -210,35 +210,193 @@ PYBIND11_MODULE(ZDPlaskin, m) {
                        bolsig_ignore_gas_temperature);
     });
 
-    m.def("set_config_atol", [&](double atol){
+    m.def("set_config_atol", [&](double atol) {
         zdp.set_config_atol(atol);
     });
 
-    m.def("set_config_rtol", [&](double rtol){
+    m.def("set_config_rtol", [&](double rtol) {
         zdp.set_config_rtol(rtol);
     });
 
-    m.def("set_config_silence_mode", [&](bool silence_mode){
+    m.def("set_config_silence_mode", [&](bool silence_mode) {
         zdp.set_config_silence_mode(silence_mode);
     });
 
-    m.def("set_config_stat_accum", [&](bool stat_accum){
+    m.def("set_config_stat_accum", [&](bool stat_accum) {
         zdp.set_config_stat_accum(stat_accum);
     });
 
-    m.def("set_config_qtplaskin_save", [&](bool save){
+    m.def("set_config_qtplaskin_save", [&](bool save) {
         zdp.set_config_qtplaskin_save(save);
     });
 
-    m.def("set_config_bolsig_ee_frac", [&](double bolsig_ee_frac){
+    m.def("set_config_bolsig_ee_frac", [&](double bolsig_ee_frac) {
         zdp.set_config_bolsig_ee_frac(bolsig_ee_frac);
     });
 
-    m.def("set_config_ignore_gas_temperature", [&](bool ignore_gas_temp){
+    m.def("set_config_ignore_gas_temperature", [&](bool ignore_gas_temp) {
         zdp.set_config_bolsig_ignore_gas_temperature(ignore_gas_temp);
     });
 
+    m.def("set_conditions",
+          [&](double gas_temperature, double reduced_frequency, double reduced_field, double elec_temperature,
+              bool gas_heating, double spec_heat_ratio, double heat_source, bool soft_reset) {
+              zdp.set_conditions(
+                      gas_temperature, reduced_frequency, reduced_field, elec_temperature, gas_heating, spec_heat_ratio,
+                      heat_source, soft_reset
+              );
+          });
 
+    m.def("set_conditions_gas_temperature", [&](double gas_temperature) {
+        zdp.set_condition_gas_temperature(gas_temperature);
+    });
+
+    m.def("set_conditions_reduced_frequency", [&](double reduced_frequency) {
+        zdp.set_condition_reduced_frequency(reduced_frequency);
+    });
+
+    m.def("set_conditions_reduced_field", [&](double reduced_field) {
+        zdp.set_condition_reduced_field(reduced_field);
+    });
+
+    m.def("set_conditions_reduced_elec_temperature", [&](double elec_temp) {
+        zdp.set_condition_reduced_elec_temperature(elec_temp);
+    });
+
+    m.def("set_conditions_reduced_gas_heating", [&](bool gas_heating) {
+        zdp.set_condition_reduced_gas_heating(gas_heating);
+    });
+
+    m.def("set_conditions_reduced_spec_heat_ratio", [&](double spec_heat_ratio) {
+        zdp.set_condition_reduced_spec_heat_ratio(spec_heat_ratio);
+    });
+
+    m.def("set_conditions_reduced_spec_heat_source", [&](double heat_source) {
+        zdp.set_condition_reduced_spec_heat_source(heat_source);
+    });
+
+    m.def("set_conditions_reduced_soft_reset", [&](bool soft_reset) {
+        zdp.set_condition_reduced_soft_reset(soft_reset);
+    });
+
+    m.def("get_conditions", [&](size_t ELEC_EEDF_SIZE) {
+        ZDPlasKinWrapper::GetConditionsResult r = zdp.get_conditions(ELEC_EEDF_SIZE);
+    });
+
+    m.def("get_condition_gas_temperature", [&]() {
+        return zdp.get_condition_gas_temperature();
+    });
+
+    m.def("get_condition_reduced_frequency", [&]() {
+        return zdp.get_condition_reduced_frequency();
+    });
+
+    m.def("get_condition_reduced_field", [&]() {
+        return zdp.get_condition_reduced_field();
+    });
+
+    m.def("get_condition_elec_temperature", [&]() {
+        return zdp.get_condition_elec_temperature();
+    });
+
+    m.def("get_condition_elec_drift_velocity", [&]() {
+        return zdp.get_condition_elec_drift_velocity();
+    });
+
+    m.def("get_condition_elec_diff_coeff", [&]() {
+        return zdp.get_condition_elec_diff_coeff();
+    });
+
+    m.def("get_condition_elec_mobility_n", [&]() {
+        return zdp.get_condition_elec_mobility_n();
+    });
+
+    m.def("get_condition_elec_mu_eps_n", [&]() {
+        return zdp.get_condition_elec_mu_eps_n();
+    });
+
+    m.def("get_condition_elec_diff_eps_n", [&]() {
+        return zdp.get_condition_elec_diff_eps_n();
+    });
+
+    m.def("get_condition_elec_frequency_n", [&]() {
+        return zdp.get_condition_elec_frequency_n();
+    });
+
+    m.def("get_condition_elec_power_n", [&]() {
+        return zdp.get_condition_elec_power_n();
+    });
+
+    m.def("get_condition_elec_power_elastic_n", [&]() {
+        return zdp.get_condition_elec_power_elastic_n();
+    });
+
+    m.def("get_condition_elec_power_inelastic_n", [&]() {
+        return zdp.get_condition_elec_power_inelastic_n();
+    });
+
+    m.def("get_condition_elec_eedf", [&](size_t ELEC_EEDF_SIZE) {
+        return zdp.get_condition_elec_eedf(ELEC_EEDF_SIZE);
+    });
+
+    m.def("reset", [&]() {
+        zdp.reset();
+    });
+
+    m.def("stop", [&](const std::string &string) {
+        zdp.stop(string);
+    });
+
+    m.def("write_file",
+          [&](const std::string &file_species, const std::string &file_reactions, const std::string &file_source_matrix,
+              int file_unit) {
+              zdp.write_file(file_species, file_reactions, file_source_matrix, file_unit);
+          });
+
+    m.def("write_qtplaskin", [&](double time, bool lforce_writing) {
+        zdp.write_qtplaskin(time, lforce_writing);
+    });
+
+    m.def("write_qtplaskin", [&](double time) {
+        zdp.write_qtplaskin(time);
+    });
+
+    m.def("reac_source_matrix", [&](double reac_rate_local[]) {
+        return zdp.reac_source_matrix(reac_rate_local);
+    });
+
+    m.def("fex", [&](int neq, double t, double y[]) {
+        return zdp.fex(neq, t, y);
+    });
+
+    m.def("jex", [&](int neq, double t, double y[], int ml, int mv, int nrpd) {
+        return zdp.jex(neq, t, y, ml, mv, nrpd);
+    });
+
+    m.def("reac_rates", [&](double time) {
+        zdp.reac_rates(time);
+    });
+
+    // TODO fix name conflict with other get_density :o
+    m.def("get_density", [&]() {
+        return zdp.getDensity();
+    });
+
+    m.def("get_species_charge", [&]() {
+        return zdp.getSpeciesCharge();
+    });
+
+    m.def("get_species_name", [&]() {
+        return zdp.getSpeciesName();
+    });
+
+    m.def("get_reaction_sign", [&]() {
+        return zdp.getReactionSign();
+    });
+
+    m.def("get_l_reaction_block", [&]() {
+        return zdp.getLReactionBlock();
+    });
 
 }
 
