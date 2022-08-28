@@ -58,7 +58,7 @@ class ZDPlasKinWrapper {
 
 	struct TotalDensityResult {
 		double ALL_SPECIES;
-		double ALL_NEUTRAl;
+		double ALL_NEUTRAL;
 		double ALL_ION_POSITIVE;
 		double ALL_ION_NEGATIVE;
 		double ALL_CHARGE;
