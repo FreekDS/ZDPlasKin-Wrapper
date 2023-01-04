@@ -3,8 +3,6 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(ZDPlaskin)
 
-add_subdirectory(fortran)
-
 include_directories(include)
 
 file(COPY ./libs/ DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/libs/")
