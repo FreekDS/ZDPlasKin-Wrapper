@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include <ZDPlasKinWrapper.h>
 #include <ZDPlasKinCompiler.h>
 #include <platform.h>
@@ -377,8 +378,7 @@ PYBIND11_MODULE(ZDPlaskin, m) {
         zdp.reac_rates(time);
     });
 
-    // TODO fix name conflict with other get_density :o
-    m.def("get_density", [&]() {
+    m.def("get_density_variable", [&]() {
         return zdp.getDensity();
     });
 
